@@ -67,3 +67,16 @@ yarn-debug.log*
 /storage/*
 !/storage/.keep
 /public/uploads
+
+# User defined
+.DS_Store
+docs/
+temp/
+## block LLM files
+AGENTS.md
+CLAUDE.md
+.vscode/
+.idea/
+.cursor/
+.cursorrules/
+.cursorrules/
