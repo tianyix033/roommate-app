@@ -2,7 +2,10 @@
 # Team 5 [Project Name](about:blank)
 
 ## Instructor
-- [@depasqua](https://github.com/depasqua)
+- Peter DePasquale [@depasqua](https://github.com/depasqua)
+
+## TA
+- @Taaha
 
 ## Team members
 
