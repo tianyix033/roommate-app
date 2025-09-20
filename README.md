@@ -5,7 +5,7 @@
 - Peter DePasquale [@depasqua](https://github.com/depasqua)
 
 ## TA
-- @Taaha
+- Taaha Bin Mohsin [@Taaha](https://github.com/taahamohsin)
 
 ## Team members
 
