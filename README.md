@@ -20,14 +20,18 @@
 - Office hours: Tuesdays and Thursdays, 12:30-3:30pm
 
 ## Team members
-
+### Team leader
+- Moayad Alismail [@MoayadAlismail](https://github.com/MoayadAlismail)
+### Team members
+- Drastansh Nadola [@Drastansh7](https://github.com/Drastansh7)
+- Eric Ma [@mAE7777](https://github.com/mAE7777)
+- Kevin Aguirre [@Kevin-Aguirre](https://github.com/Kevin-Aguirre)
 - Steven Li [@StevenLi-phoenix](https://github.com/StevenLi-phoenix)
 - Terry Li [@turtlelyte](https://github.com/turtlelyte)
 - Tianyi Xu [@tianyix033](https://github.com/tianyix033)
-- Drastansh Nadola [@Drastansh7](https://github.com/Drastansh7)
-- Kevin Aguirre [@Kevin-Aguirre](https://github.com/Kevin-Aguirre)
-- Eric Ma [@mAE7777](https://github.com/mAE7777)
-- Moayad Alismail [@MoayadAlismail](https://github.com/MoayadAlismail)
+
+
+
 
 
 ## Stack
