@@ -3,7 +3,7 @@
 
 ## Instructor
 - Peter DePasquale [@depasqua](https://github.com/depasqua)
-- Email: pd80@nyu.edu
+- Email: [pd80@nyu.edu](mailto:pd80@nyu.edu)
 - Office: 370 Jay Street, Rm 866
 - Office hours:
   - Mondays: 1–3pm (in-person only)
@@ -15,7 +15,7 @@
 
 ## TA
 - Taaha Bin Mohsin [@Taaha](https://github.com/taahamohsin)
-- Email: tb3486@nyu.edu
+- Email: [tb3486@nyu.edu](mailto:tb3486@nyu.edu)
 - Office: Jacobs Rm 223
 - Office hours: Tuesdays and Thursdays, 12:30-3:30pm
 
