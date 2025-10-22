@@ -1,5 +1,7 @@
 # RoomMate – CS-UY 4513 Team 5 (Fall 2025)
 
+[![Cucumber](https://github.com/NYU-CSE-Software-Engineering/cs-uy-4513-f25-team5/actions/workflows/cucumber.yml/badge.svg)](https://github.com/NYU-CSE-Software-Engineering/cs-uy-4513-f25-team5/actions/workflows/cucumber.yml)
+
 RoomMate is a SaaS platform that helps students and newcomers find compatible roommates and share housing costs.
 
 - Build secure user profiles with lifestyle, budget, and housing preferences
