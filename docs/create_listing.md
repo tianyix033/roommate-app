@@ -1,4 +1,4 @@
-# Creat Listing
+# Create Listing
 
 ## User story
 As a signed-in user, I want to create housing listings so that I can advertise rooms/apartments for potential roommates.
