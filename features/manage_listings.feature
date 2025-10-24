@@ -32,4 +32,4 @@ Feature: Manage existing listings
   Scenario: User attempts to edit another user's listing
     Given another user has a listing titled "Luxury Loft Midtown"
     When I visit the edit page for "Luxury Loft Midtown"
-    Then I should see an error message
+    Then I should see an authorization error message
