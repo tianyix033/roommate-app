@@ -38,3 +38,5 @@ end
 ```
 
 ## Screenshots
+![picture1](../../features/screenshots/manage_listings_1.png)
+![picture2](../../features/screenshots/manage_listings_2.png)
