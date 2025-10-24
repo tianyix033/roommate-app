@@ -2,3 +2,4 @@
 
 * [Create Listing (Kevin Aguirre)](./features/create_listing.md)
 * [User Profle Management (Steven Li)](./features/user_profile_management.md)
+* [chat([MoayadAlismail](https://github.com/MoayadAlismail))](./features/chat.md)
