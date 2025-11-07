@@ -37,5 +37,18 @@ RSpec.describe Listing, type: :model do
 
       expect(results).to match_array(in_range)
     end
+
+    it 'filters listings by keywords in title or description' do
+      user = User.create!(email: 'keywords@example.com', password: 'password123')
+      matching = [
+        Listing.create!(title: 'Furnished studio', description: 'Close to campus', price: 800, city: 'Boston', user: user),
+        Listing.create!(title: 'Sunny loft', description: 'Furnished with modern decor', price: 1100, city: 'Boston', user: user)
+      ]
+      Listing.create!(title: 'Budget room', description: 'Shared space', price: 500, city: 'Boston', user: user)
+
+      results = described_class.search(keywords: 'furnished')
+
+      expect(results).to match_array(matching)
+    end
   end
 end
