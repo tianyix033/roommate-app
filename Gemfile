@@ -39,7 +39,7 @@ group :development, :test do
   gem "debug", platforms: %i[ mri mingw mswin x64_mingw ]
   gem "rspec-rails", "~> 6.1"
   gem "factory_bot_rails"
-  gem "cucumber-rails"
+  gem "cucumber-rails", require: false
   gem "capybara"
   gem 'database_cleaner-active_record'
 end

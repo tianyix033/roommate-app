@@ -2,6 +2,11 @@ require 'rails_helper'
 
 RSpec.describe Listing, type: :model do
   describe '.search' do
+    before do
+      Listing.delete_all
+      User.delete_all
+    end
+
     it 'returns all listings when no filters are provided' do
       user = User.create!(email: 'searcher@example.com', password: 'password123')
       listings = [
