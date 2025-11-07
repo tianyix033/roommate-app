@@ -105,4 +105,3 @@ Feature: Search for housing listings
     Then I should see "Cozy room near campus"
     And I should see "Affordable studio"
     And I should see "Budget room"
-

@@ -5,19 +5,6 @@
 # Note: Given('I am a signed-in user') is defined in create_listing_steps.rb
 # These steps are reused, so we don't redefine them here to avoid ambiguity
 
-# move these steps here for unit testing
-Given('the test database is clean') do
-  DatabaseCleaner.clean_with(:truncation)
-end
-
-Given('I am a signed-in user') do
-  @user ||= User.create!(email: 'test@example.com', password: 'password')
-  visit new_user_session_path
-  fill_in 'Email', with: @user.email
-  fill_in 'Password', with: @user.password
-  click_button 'Log in'
-end
-
 # Navigation steps
 Given('I am on the search listings page') do
   visit search_listings_path
@@ -25,7 +12,7 @@ end
 
 # Data setup steps
 Given('there are listings with the following details:') do |table|
-  @user ||= User.find_by(email: 'test@example.com') || User.create!(email: 'test@example.com', password: 'password')
+  owner = @current_user || User.create!(email: 'owner@example.com', password: 'password123')
   
   table.hashes.each do |listing_data|
     Listing.create!(
@@ -33,7 +20,7 @@ Given('there are listings with the following details:') do |table|
       description: listing_data['description'],
       city: listing_data['city'],
       price: listing_data['price'].to_f,
-      user: @user
+      user: owner
     )
   end
 end
@@ -42,17 +29,7 @@ end
 # When('I fill in {string} with {string}') - already defined in user_login_authentication_steps.rb
 # When('I press {string}') - already defined in user_login_authentication_steps.rb
 
-# Assertion steps - checking page content
-Then('I should see {string}') do |text|
-  expect(page).to have_content(text)
-end
-
-Then('I should not see {string}') do |text|
-  expect(page).not_to have_content(text)
-end
-
 # Path helper methods
 def search_listings_path
-  '/search/listings'
+  Rails.application.routes.url_helpers.search_listings_path
 end
-

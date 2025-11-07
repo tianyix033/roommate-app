@@ -1,12 +1,11 @@
 class ListingsController < ApplicationController
   def search
-    filters = params.slice(:city, :min_price, :max_price, :keywords).to_unsafe_h.symbolize_keys
-    @listings = Listing.search(filters)
+    @filters = params.slice(:city, :min_price, :max_price, :keywords).permit!.to_h.symbolize_keys
+    @listings = Listing.search(@filters)
 
-    if @listings.any?
-      render plain: @listings.pluck(:title).join(', ')
-    else
-      render plain: 'No results found'
+    respond_to do |format|
+      format.html { render :search }
+      format.json { render json: @listings }
     end
   end
 end
