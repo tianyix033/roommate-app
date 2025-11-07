@@ -23,5 +23,19 @@ RSpec.describe Listing, type: :model do
 
       expect(results).to contain_exactly(matching)
     end
+
+    it 'filters listings within a price range inclusive of bounds' do
+      user = User.create!(email: 'pricing@example.com', password: 'password123')
+      in_range = [
+        Listing.create!(title: 'Cozy room', description: 'Affordable', price: 600, city: 'Boston', user: user),
+        Listing.create!(title: 'Sunny studio', description: 'Bright', price: 900, city: 'Boston', user: user)
+      ]
+      Listing.create!(title: 'Budget basement', description: 'Cheap', price: 500, city: 'Boston', user: user)
+      Listing.create!(title: 'Luxury loft', description: 'Expensive', price: 1200, city: 'Boston', user: user)
+
+      results = described_class.search(min_price: 600, max_price: 900)
+
+      expect(results).to match_array(in_range)
+    end
   end
 end
