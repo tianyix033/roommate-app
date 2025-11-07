@@ -66,4 +66,39 @@ RSpec.describe Listing, type: :model do
       expect(listing.verified).to eq(true)
     end
   end
+
+  describe '.pending_verification' do
+    before do
+      @listing1 = Listing.create!(
+        title: 'Needs Verification',
+        price: 100,
+        city: 'NYC',
+        owner_email: 'alice@example.com',
+        status: 'pending',
+        verification_requested: true
+      )
+      @listing2 = Listing.create!(
+        title: 'No Verification',
+        price: 100,
+        city: 'NYC',
+        owner_email: 'bob@example.com',
+        status: 'published',
+        verification_requested: false
+      )
+      @listing3 = Listing.create!(
+        title: 'Another Verification',
+        price: 100,
+        city: 'NYC',
+        owner_email: 'charlie@example.com',
+        status: 'pending',
+        verification_requested: true
+      )
+    end
+
+    it 'returns only listings with verification_requested true' do
+      pending_listings = Listing.pending_verification
+      expect(pending_listings).to include(@listing1, @listing3)
+      expect(pending_listings).not_to include(@listing2)
+    end
+  end
 end
