@@ -6,7 +6,7 @@ class Listing < ApplicationRecord
   STATUS_PUBLISHED = 'published'.freeze
   STATUS_VERIFIED = 'Verified'.freeze
 
-  validates :title, :price, :city, :status, presence: true
+  validates :title, :price, :city, :status, :owner_email, presence: true
   validates :price, numericality: { greater_than: 0 }
   validates :status, inclusion: { in: [STATUS_PENDING, STATUS_PUBLISHED, STATUS_VERIFIED] }
 
