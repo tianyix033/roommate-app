@@ -50,5 +50,23 @@ RSpec.describe Listing, type: :model do
 
       expect(results).to match_array(matching)
     end
+
+    it 'applies multiple filters together' do
+      user = User.create!(email: 'combined@example.com', password: 'password123')
+      matching = Listing.create!(
+        title: 'Furnished Midtown studio',
+        description: 'Modern furnished space',
+        price: 850,
+        city: 'New York',
+        user: user
+      )
+      Listing.create!(title: 'Furnished but pricey', description: 'Luxury', price: 1500, city: 'New York', user: user)
+      Listing.create!(title: 'Affordable unfurnished', description: 'Basic room', price: 700, city: 'New York', user: user)
+      Listing.create!(title: 'Furnished in Boston', description: 'Nice place', price: 850, city: 'Boston', user: user)
+
+      results = described_class.search(city: 'new york', min_price: 800, max_price: 900, keywords: 'furnished')
+
+      expect(results).to contain_exactly(matching)
+    end
   end
 end
