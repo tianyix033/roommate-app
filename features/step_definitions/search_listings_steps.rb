@@ -5,6 +5,19 @@
 # Note: Given('I am a signed-in user') is defined in create_listing_steps.rb
 # These steps are reused, so we don't redefine them here to avoid ambiguity
 
+# move these steps here for unit testing
+Given('the test database is clean') do
+  DatabaseCleaner.clean_with(:truncation)
+end
+
+Given('I am a signed-in user') do
+  @user ||= User.create!(email: 'test@example.com', password: 'password')
+  visit new_user_session_path
+  fill_in 'Email', with: @user.email
+  fill_in 'Password', with: @user.password
+  click_button 'Log in'
+end
+
 # Navigation steps
 Given('I am on the search listings page') do
   visit search_listings_path
