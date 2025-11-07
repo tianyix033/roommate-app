@@ -13,5 +13,15 @@ RSpec.describe Listing, type: :model do
 
       expect(results).to match_array(listings)
     end
+
+    it 'filters listings by city case-insensitively' do
+      user = User.create!(email: 'filtered@example.com', password: 'password123')
+      matching = Listing.create!(title: 'Harlem apartment', description: 'Spacious', price: 900, city: 'New York', user: user)
+      Listing.create!(title: 'Downtown loft', description: 'Trendy', price: 1500, city: 'Chicago', user: user)
+
+      results = described_class.search(city: 'new york')
+
+      expect(results).to contain_exactly(matching)
+    end
   end
 end
