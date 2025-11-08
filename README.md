@@ -47,7 +47,7 @@ Features in [Features](docs/features.md)
 
 ## Stack
 - Language: Ruby 3.3.8, HTML, CSS
-- Framework: Ruby on Rails 7 (API mode)
+- Framework: Ruby on Rails 7
 - Database: PostgreSQL
 - Testing:
   - Unit & request: RSpec
