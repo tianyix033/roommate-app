@@ -6,7 +6,6 @@ class Listing < ApplicationRecord
   STATUS_PUBLISHED = 'published'.freeze
   STATUS_VERIFIED = 'Verified'.freeze
 
-  after_initialize :set_default_status, if: :new_record?
 
   validates :title, :price, :city, :status, :owner_email, presence: true
   validates :price, numericality: { greater_than: 0 }
