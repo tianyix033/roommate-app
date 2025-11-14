@@ -218,7 +218,7 @@ RSpec.describe "Listings", type: :request do
     end
   end
 
-  describe "GET /listings/:id/edit", skip: "not ready yet" do
+  describe "GET /listings/:id/edit" do
     context "when editing own listing" do
       it "renders the edit form" do
         get edit_listing_path(listing)
