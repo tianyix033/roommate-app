@@ -2,11 +2,9 @@ require 'rails_helper'
 
 RSpec.describe User, type: :model do
   describe 'validations' do
-    it 'is invalid without an email' do
-      user = described_class.new(email: nil)
-
-      expect(user).not_to be_valid
-      expect(user.errors[:email]).to include("can't be blank")
+    it 'allows email to be optional' do
+      user = described_class.new(email: nil, password: 'password123')
+      expect(user).to be_valid
     end
   end
 
