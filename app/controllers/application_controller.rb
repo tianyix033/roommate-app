@@ -9,19 +9,22 @@ class ApplicationController < ActionController::Base
     @current_user =
       if session[:user_id]
         User.find_by(id: session[:user_id])
-      elsif Rails.env.test?
-        # Bootstrap fallback for tests (like main branch)
+      elsif Rails.env.test? && cucumber_context?
         User.first || bootstrap_demo_user
       end
   end
 
   def bootstrap_demo_user
-    # Bootstrap user for tests - matches main branch behavior
     user = User.first || User.create!(email: 'demo@example.com', password: 'password123')
     if user && session
       session[:user_id] = user.id
     end
     user
+  end
+
+  def cucumber_context?
+    # Check if we're in a Cucumber/Capybara context (not RSpec request spec)
+    defined?(Capybara) && defined?(Cucumber)
   end
 
   def logged_in?
@@ -30,12 +33,6 @@ class ApplicationController < ActionController::Base
 
   def require_login
     return if logged_in?
-    
-    # In test environment, bootstrap a user instead of redirecting
-    if Rails.env.test?
-      bootstrap_demo_user
-      return
-    end
     
     redirect_to '/auth/login', alert: 'Please sign in first.'
   end
