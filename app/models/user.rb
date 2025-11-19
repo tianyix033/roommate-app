@@ -8,6 +8,7 @@ class User < ApplicationRecord
   validates :role, inclusion: { in: ROLES }
 
   validates :email, presence: true
+  validates :password, presence: true
   validates :display_name, presence: true, if: :profile_display_name_required?
   validates :budget,
             numericality: { greater_than_or_equal_to: 0 },
