@@ -8,6 +8,13 @@ RSpec.describe User, type: :model do
       expect(user).not_to be_valid
       expect(user.errors[:email]).to include("can't be blank")
     end
+
+    it 'is invalid without a password' do
+      user = described_class.new(email: 'passwordless@example.com', password: nil)
+
+      expect(user).not_to be_valid
+      expect(user.errors[:password]).to include("can't be blank")
+    end
   end
 
   describe 'attribute aliases' do
