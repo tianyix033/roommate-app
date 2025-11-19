@@ -58,4 +58,25 @@ RSpec.describe User, type: :model do
       expect(user.admin?).to be(false)
     end
   end
+
+  describe 'suspension' do
+    it 'defaults to active' do
+      user = described_class.new(email: 'test@example.com', password: 'secret')
+
+      expect(user).not_to be_suspended
+      expect(user).to be_active
+    end
+
+    it 'can be suspended and unsuspended' do
+      user = described_class.create!(email: 'test@example.com', password: 'secret')
+
+      user.suspend!
+      expect(user).to be_suspended
+      expect(user).not_to be_active
+
+      user.unsuspend!
+      expect(user).not_to be_suspended
+      expect(user).to be_active
+    end
+  end
 end
