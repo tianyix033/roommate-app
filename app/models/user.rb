@@ -19,6 +19,18 @@ class User < ApplicationRecord
     role == 'admin'
   end
 
+  def suspend!
+    update!(suspended: true)
+  end
+
+  def unsuspend!
+    update!(suspended: false)
+  end
+
+  def active?
+    !suspended?
+  end
+
   private
 
   def profile_display_name_required?
