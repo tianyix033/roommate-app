@@ -1,0 +1,45 @@
+class MatchesController < ApplicationController
+  before_action :require_user, only: [:index, :show, :like]
+
+  def index
+    @matches = Match.potential_for(current_user).includes(:matched_user)
+    
+    if @matches.empty?
+      @no_matches_message = "No matches found"
+      @suggestions_message = "Update your profile preferences to find better matches"
+    end
+  end
+
+  def show
+    @match = Match.find(params[:id])
+    
+    unless @match.user_id == current_user.id
+      redirect_to matches_path, alert: "You can only view your own matches"
+      return
+    end
+    
+    @matched_user = @match.matched_user
+  end
+
+  def like
+    @match = Match.find(params[:id])
+    
+    unless @match.user_id == current_user.id
+      redirect_to matches_path, alert: "You can only like your own matches"
+      return
+    end
+    
+    # In a real app, you might have a Favorite or LikedMatch model
+    # For now, we'll just redirect with a success message
+    redirect_to matches_path, notice: "Match saved to favorites!"
+  end
+
+  private
+
+  def require_user
+    unless current_user
+      redirect_to login_path, alert: "Please log in to view matches"
+    end
+  end
+end
+

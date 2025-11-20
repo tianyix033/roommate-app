@@ -21,4 +21,12 @@ Rails.application.routes.draw do
     end
   end
   resources :verification_requests, only: [:index]
+  
+  resources :matches, only: [:index, :show] do
+    member do
+      post :like, to: 'matches#like'
+    end
+  end
+  
+  get '/login', to: 'application#login', as: :login
 end

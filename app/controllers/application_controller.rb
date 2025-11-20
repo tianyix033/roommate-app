@@ -36,4 +36,9 @@ class ApplicationController < ActionController::Base
     
     redirect_to '/auth/login', alert: 'Please sign in first.'
   end
+  
+  def login
+    # Placeholder login page - will be implemented by authentication feature
+    render plain: "Login page - Please implement authentication"
+  end
 end
