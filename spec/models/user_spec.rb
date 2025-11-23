@@ -26,6 +26,14 @@ RSpec.describe User, type: :model do
         price: 500,
         city: 'New York',
         status: Listing::STATUS_PENDING,
+        owner_email: 'owner@example.com'
+      )
+      user.listings.create!(
+        title: 'Test Listing',
+        description: 'Sample',
+        price: 500,
+        city: 'New York',
+        status: Listing::STATUS_PENDING,
         owner_email: user.email
       )
 
