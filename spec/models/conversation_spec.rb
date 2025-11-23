@@ -11,4 +11,3 @@ RSpec.describe Conversation, type: :model do
     end
   end
 end
-
