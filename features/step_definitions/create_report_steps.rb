@@ -1,5 +1,5 @@
 Given("an admin exists") do
-  @admin = User.create!(email: "admin@example.com", password: "password", admin: true)
+  @admin ||= User.create!(email: "admin@example.com", password: "password", role: "admin")
 end
 
 Given("at least one report exists in the system") do
@@ -64,7 +64,7 @@ end
 # Admin Viewing Reports Scenario
 
 Given("I am signed in as an admin") do
-  @admin = User.create!(email: "admin2@example.com", password: "password", admin: true)
+  @admin ||= User.create!(email: "admin2@example.com", password: "password", role: "admin")
   login_as(@admin, scope: :user)
 end
 
