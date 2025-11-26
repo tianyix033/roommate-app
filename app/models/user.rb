@@ -1,8 +1,11 @@
 class User < ApplicationRecord
+  has_secure_password
+
   has_many :listings, dependent: :destroy
   has_one :avatar, dependent: :destroy
 
-  validates :email, presence: true
+  validates :email, presence: true, uniqueness: true
+  validates :password, presence: true, on: :create
   validates :display_name, presence: true, if: :profile_display_name_required?
   validates :budget,
             numericality: { greater_than_or_equal_to: 0 },
