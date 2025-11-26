@@ -137,7 +137,7 @@ Then("I should see {string} message") do |message|
 end
 
 Then("I should see suggestions to update my profile") do
-  expect(page).to have_content("Update your profile preferences") || expect(page).to have_content("suggestions")
+  expect(page).to have_content("Update your profile preferences")
 end
 
 Then("I should see a confirmation message") do
@@ -146,7 +146,7 @@ end
 
 Then("the match should be saved to my favorites") do
   # In real implementation, this would verify the match was saved
-  expect(page).to have_content("saved to favorites") || expect(page).to have_content("favorites")
+  expect(page).to have_content("saved to favorites")
 end
 
 Then("I should be redirected to the login page") do
