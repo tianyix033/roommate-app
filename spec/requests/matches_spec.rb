@@ -35,7 +35,8 @@ RSpec.describe "Matches", type: :request do
   end
 
   before do
-    allow_any_instance_of(ApplicationController).to receive(:current_user).and_return(user)
+    # Log in the user using real session authentication
+    post '/auth/login', params: { email: user.email, password: 'password123' }
   end
 
   describe 'GET /matches' do
@@ -76,12 +77,14 @@ RSpec.describe "Matches", type: :request do
 
     context 'when user is not authenticated' do
       before do
-        allow_any_instance_of(ApplicationController).to receive(:current_user).and_return(nil)
+        # Clear session to simulate not being logged in
+        post '/auth/logout' rescue nil
+        session.clear
       end
 
       it 'redirects to login page' do
         get matches_path
-        expect(response).to redirect_to(login_path)
+        expect(response).to redirect_to('/auth/login')
       end
     end
   end
@@ -117,12 +120,14 @@ RSpec.describe "Matches", type: :request do
 
     context 'when user is not authenticated' do
       before do
-        allow_any_instance_of(ApplicationController).to receive(:current_user).and_return(nil)
+        # Clear session to simulate not being logged in
+        post '/auth/logout' rescue nil
+        session.clear
       end
 
       it 'redirects to login page' do
         get match_path(match)
-        expect(response).to redirect_to(login_path)
+        expect(response).to redirect_to('/auth/login')
       end
     end
   end
@@ -147,12 +152,14 @@ RSpec.describe "Matches", type: :request do
 
     context 'when user is not authenticated' do
       before do
-        allow_any_instance_of(ApplicationController).to receive(:current_user).and_return(nil)
+        # Clear session to simulate not being logged in
+        post '/auth/logout' rescue nil
+        session.clear
       end
 
       it 'redirects to login page' do
         post like_match_path(match)
-        expect(response).to redirect_to(login_path)
+        expect(response).to redirect_to('/auth/login')
       end
     end
   end

@@ -1,5 +1,5 @@
 class MatchesController < ApplicationController
-  before_action :require_user, only: [:index, :show, :like]
+  before_action :require_login, only: [:index, :show, :like]
 
   def index
     @matches = Match.potential_for(current_user).includes(:matched_user)
@@ -34,12 +34,5 @@ class MatchesController < ApplicationController
     redirect_to matches_path, notice: "Match saved to favorites!"
   end
 
-  private
-
-  def require_user
-    unless current_user
-      redirect_to login_path, alert: "Please log in to view matches"
-    end
-  end
 end
 

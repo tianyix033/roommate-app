@@ -27,6 +27,4 @@ Rails.application.routes.draw do
       post :like, to: 'matches#like'
     end
   end
-  
-  get '/login', to: 'application#login', as: :login
 end

@@ -15,9 +15,8 @@ Given("I am logged in as a user") do
     contact_visibility: 'Public'
   )
   
-  # Simulate login by setting session or using authentication helper
-  # In a real Rails app, this would be handled by Devise or similar
-  allow_any_instance_of(ApplicationController).to receive(:current_user).and_return(@current_user)
+  # Log in using real session authentication via Capybara
+  page.driver.post '/auth/login', { email: @current_user.email, password: 'password123' }
 end
 
 Given("I have a profile with preferences") do
@@ -76,9 +75,11 @@ Given("there are no potential matches available") do
 end
 
 Given("I am not logged in") do
-  # Clear current user to simulate not being logged in
+  # Clear session to simulate not being logged in
   @current_user = nil
-  allow_any_instance_of(ApplicationController).to receive(:current_user).and_return(nil)
+  visit '/auth/logout' rescue nil
+  # Clear cookies/session
+  page.driver.post '/auth/logout' rescue nil
 end
 
 When("I visit the matches page") do
@@ -150,5 +151,5 @@ Then("the match should be saved to my favorites") do
 end
 
 Then("I should be redirected to the login page") do
-  expect(current_path).to eq(login_path)
+  expect(current_path).to eq('/auth/login')
 end
