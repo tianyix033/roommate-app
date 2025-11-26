@@ -13,4 +13,3 @@ class CreateMatches < ActiveRecord::Migration[7.1]
     add_index :matches, [:user_id, :matched_user_id], unique: true
   end
 end
-
