@@ -26,12 +26,17 @@ class MatchingService
       
       # Only create match if score meets minimum threshold
       if score >= MINIMUM_COMPATIBILITY_SCORE
-        Match.create!(
-          user: user,
-          matched_user: other_user,
-          compatibility_score: score
-        )
-        matches_created += 1
+        begin
+          Match.create!(
+            user: user,
+            matched_user: other_user,
+            compatibility_score: score
+          )
+          matches_created += 1
+        rescue ActiveRecord::RecordInvalid => e
+          # Skip if validation fails (e.g., duplicate match somehow created)
+          next
+        end
       end
     end
     

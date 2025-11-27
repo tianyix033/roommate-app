@@ -44,6 +44,11 @@ RSpec.describe MatchingService, type: :service do
 
   describe '.generate_matches_for' do
     it 'creates matches for users with compatible preferences' do
+      # Ensure users are created before generating matches
+      user1
+      user2
+      user3
+      
       matches_created = MatchingService.generate_matches_for(user1)
       
       expect(matches_created).to be > 0
@@ -51,6 +56,10 @@ RSpec.describe MatchingService, type: :service do
     end
 
     it 'creates match with user2 who has similar preferences' do
+      # Ensure users are created before generating matches
+      user1
+      user2
+      
       MatchingService.generate_matches_for(user1)
       
       match = Match.find_by(user_id: user1.id, matched_user_id: user2.id)
@@ -112,6 +121,11 @@ RSpec.describe MatchingService, type: :service do
 
   describe '.generate_all_matches' do
     it 'generates matches for all users' do
+      # Ensure all users are created
+      user1
+      user2
+      user3
+      
       total_matches = MatchingService.generate_all_matches
       
       expect(total_matches).to be > 0
@@ -119,9 +133,14 @@ RSpec.describe MatchingService, type: :service do
     end
 
     it 'creates bidirectional matches for compatible users' do
+      # Ensure all users are created
+      user1
+      user2
+      
       MatchingService.generate_all_matches
       
-      # If user1 and user2 are compatible, both should have matches
+      # If user1 and user2 are compatible, at least one should have a match
+      # (generate_all_matches creates matches for each user, so user1->user2 or user2->user1)
       expect(Match.exists?(user_id: user1.id, matched_user_id: user2.id) ||
              Match.exists?(user_id: user2.id, matched_user_id: user1.id)).to be true
     end
