@@ -132,6 +132,59 @@ RSpec.describe "Matches", type: :request do
     end
   end
 
+  describe 'POST /matches/generate' do
+    context 'when user is authenticated' do
+      it 'generates matches for the current user' do
+        # Create another user for matching
+        other_user = User.create!(
+          email: 'other@example.com',
+          password: 'password123',
+          display_name: 'Other User',
+          budget: 1100,
+          preferred_location: 'New York',
+          sleep_schedule: 'Early bird'
+        )
+        
+        post generate_matches_path
+        expect(response).to redirect_to(matches_path)
+      end
+
+      it 'displays success message when matches are found' do
+        other_user = User.create!(
+          email: 'other@example.com',
+          password: 'password123',
+          display_name: 'Other User',
+          budget: 1100,
+          preferred_location: 'New York',
+          sleep_schedule: 'Early bird'
+        )
+        
+        post generate_matches_path
+        follow_redirect!
+        expect(response.body).to include('new potential match')
+      end
+
+      it 'displays message when no matches are found' do
+        # No other users exist
+        post generate_matches_path
+        follow_redirect!
+        expect(response.body).to include('No new matches found')
+      end
+    end
+
+    context 'when user is not authenticated' do
+      before do
+        post '/auth/logout' rescue nil
+        session.clear
+      end
+
+      it 'redirects to login page' do
+        post generate_matches_path
+        expect(response).to redirect_to('/auth/login')
+      end
+    end
+  end
+
   describe 'POST /matches/:id/like' do
     let(:match) do
       Match.create!(user: user, matched_user: matched_user1, compatibility_score: 85)

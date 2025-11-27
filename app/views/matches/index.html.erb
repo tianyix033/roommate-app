@@ -3,6 +3,10 @@
 
 <h1>Potential Matches</h1>
 
+<div class="actions">
+  <%= button_to "Find Matches", generate_matches_path, method: :post, class: "btn btn-primary" %>
+</div>
+
 <% if @no_matches_message %>
   <div class="no-matches">
     <p><%= @no_matches_message %></p>

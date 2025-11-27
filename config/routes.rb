@@ -23,6 +23,9 @@ Rails.application.routes.draw do
   resources :verification_requests, only: [:index]
   
   resources :matches, only: [:index, :show] do
+    collection do
+      post :generate, to: 'matches#generate'
+    end
     member do
       post :like, to: 'matches#like'
     end
