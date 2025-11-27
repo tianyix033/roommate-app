@@ -111,6 +111,34 @@
               Live GitHub stats + CI badge link.
             </p>
           </div>
+
+          <div class="mt-6 rounded-3xl border border-white/10 bg-white/5 p-6 shadow-xl backdrop-blur">
+            <div class="mb-4 flex items-center justify-between">
+              <div>
+                <p class="text-sm font-semibold text-white">All routes</p>
+                <p class="text-xs uppercase tracking-[0.25em] text-mint">Live from router</p>
+              </div>
+              <span class="rounded-full bg-white/10 px-3 py-1 text-[11px] font-semibold text-white/80">Auto-updating</span>
+            </div>
+            <div class="max-h-72 space-y-2 overflow-auto">
+              <% @routes.each do |route| %>
+                <div class="grid grid-cols-1 gap-2 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white/80 md:grid-cols-[80px_1fr_1fr]">
+                  <div class="flex items-center gap-2">
+                    <span class="rounded-full bg-white/10 px-2 py-1 text-[11px] font-semibold text-mint"><%= route[:verb] %></span>
+                    <% if route[:name].present? %>
+                      <span class="text-[11px] uppercase tracking-wide text-white/50"><%= route[:name] %></span>
+                    <% end %>
+                  </div>
+                  <div class="text-white font-semibold break-all"><%= route[:path] %></div>
+                  <div class="text-white/70">
+                    <span class="font-semibold text-white/90"><%= route[:controller] %></span>
+                    <span class="text-white/50">#</span>
+                    <span class="text-white/80"><%= route[:action] %></span>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+          </div>
         </div>
       </div>
 
