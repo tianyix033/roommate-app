@@ -6,7 +6,7 @@
 <%= form_with url: auth_login_path, local: true do |form| %>
   <div>
     <%= form.label :email, "Email" %><br>
-    <%= form.email_field :email, value: params[:email] %>
+    <%= form.email_field :email, value: @submitted_email || params[:email] %>
   </div>
 
   <div>
