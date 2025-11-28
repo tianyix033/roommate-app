@@ -74,6 +74,11 @@ Then('I should be on the home page') do
   expect(current_path).to eq(root_path)
 end
 
+Then('the {string} field should contain {string}') do |field_label, expected_value|
+  field = find_field(field_label)
+  expect(field.value).to eq(expected_value)
+end
+
 # Database assertion steps
 Then('the user {string} should exist in the database') do |email|
   user = User.find_by(email: email)
