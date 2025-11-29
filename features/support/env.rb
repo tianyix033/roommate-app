@@ -4,9 +4,9 @@
 # instead of editing this one. Cucumber will automatically load all features/**/*.rb
 # files.
 
-require 'cucumber/rails'
 require 'simplecov'
 require 'simplecov-console'
+require 'cucumber/rails'
 
 SimpleCov.minimum_coverage 70
 SimpleCov.start 'rails' do
