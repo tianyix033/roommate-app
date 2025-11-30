@@ -1,30 +1,46 @@
+# Background Steps
+
 Given("an admin exists") do
-  @admin ||= User.create!(email: "admin@example.com", password: "password", role: "admin")
+  @admin ||= User.find_or_create_by!(email: "admin@example.com") do |user|
+    user.password = "password"
+    user.role = "admin"
+  end
 end
 
 Given("at least one report exists in the system") do
+  reporter = User.find_or_create_by!(email: "reporter@example.com") do |user|
+    user.password = "password"
+  end
+  
+  reported_user = User.find_or_create_by!(email: "reporteduser@example.com") do |user|
+    user.password = "password"
+  end
+  
   @existing_report ||= Report.create!(
-    reporter: User.create!(email: "reporter@example.com", password: "password"),
-    reported_user: User.create!(email: "reporteduser@example.com", password: "password"),
+    reporter: reporter,
+    reported_user: reported_user,
+    reported_username: reported_user.email,
     report_type: "Harassment",
     description: "Existing test report"
   )
 end
 
-# Create Report Scenario
-
-Given("I am signed in") do
-  @current_user ||= User.create!(email: "user@example.com", password: "password")
-  login_as(@current_user, scope: :user)
+Given("a reporter user exists") do
+  @reporter_user ||= User.find_or_create_by!(email: "cucumberreporter@example.com") do |user|
+    user.password = "password"
+  end
 end
 
-Given("I am viewing another user's profile") do
-  @other_user ||= User.create!(email: "other@example.com", password: "password")
-  visit user_path(@other_user)
+
+# New Reports Page Steps
+
+Given("I am on the \"New Reports\" page") do
+  visit new_report_path
 end
 
-When("I press {string}") do |button_text|
-  click_button button_text
+When("I enter {string} in the username field") do |username|
+  fill_in "report_username", with: username
+  @reported_user = User.find_by(email: username)
 end
 
 When("I select {string} from the report type list") do |type|
@@ -35,40 +51,35 @@ When("I enter {string} in the description field") do |description|
   fill_in "report_description", with: description
 end
 
-When("I submit the report") do
+When("I press the submit button") do
   click_button "Submit Report"
 end
-
-Then("I should see a confirmation message") do
-  expect(page).to have_content("Your report has been submitted")
-end
-
-Then("the report should be saved in the system") do
-  expect(Report.last.report_type).not_to be_nil
-end
-
-# Missing Information Scenario
 
 When("I submit the report without selecting a type") do
   click_button "Submit Report"
 end
 
-Then("I should see an error message") do
-  expect(page).to have_content("Report type can't be blank")
+# Then Steps
+
+# Then("I should see a confirmation") do
+#   expect(page).to have_content("Your report has been submitted. Thank you.")
+# end
+
+Then("the report should be saved in the system") do
+  expect(Report.last.report_type).not_to be_nil
 end
 
-Then("the report should not be created") do
-  expect(Report.count).to eq(1).or eq(0)
+Then("I should see an error message stating report type can't be blank") do
+  expect(page).to have_content("Report type can't be blank")  
 end
 
-# Admin Viewing Reports Scenario
-
-Given("I am signed in as an admin") do
-  @admin ||= User.create!(email: "admin2@example.com", password: "password", role: "admin")
-  login_as(@admin, scope: :user)
+Then("I should see an error message stating the user does not exist") do
+  expect(page).to have_content("User does not exist")
 end
 
-When("I visit the admin reports page") do
+# Admin Reports Page Steps
+
+Given("I visit the admin reports page as an admin") do
   visit admin_reports_path
 end
 

@@ -4,18 +4,15 @@ RSpec.describe 'Reports', type: :request do
   let(:user) { create(:user) }
   let(:other_user) { create(:user) }
 
-  before do
-    sign_in user
-  end
-
   describe 'POST /reports' do
     context 'with valid parameters' do
       let(:valid_params) do
         {
           report: {
-            reported_user_id: other_user.id,
+            reported_username: other_user.email,
             report_type: 'Harassment',
-            description: 'Inappropriate behavior'
+            description: 'Inappropriate behavior',
+            reporter_id: user.id
           }
         }
       end
@@ -36,9 +33,10 @@ RSpec.describe 'Reports', type: :request do
       let(:invalid_params) do
         {
           report: {
-            reported_user_id: other_user.id,
+            reported_username: other_user.email,
             report_type: '',
-            description: 'Missing type'
+            description: 'Missing type',
+            reporter_id: user.id
           }
         }
       end
@@ -51,6 +49,30 @@ RSpec.describe 'Reports', type: :request do
 
       it 'returns unprocessable entity status' do
         post reports_path, params: invalid_params
+        expect(response).to have_http_status(:unprocessable_entity)
+      end
+    end
+
+    context 'with non-existent username' do
+      let(:nonexistent_params) do
+        {
+          report: {
+            reported_username: 'nonexistent@example.com',
+            report_type: 'Harassment',
+            description: 'User does not exist',
+            reporter_id: user.id
+          }
+        }
+      end
+
+      it 'does not create a report' do
+        expect {
+          post reports_path, params: nonexistent_params
+        }.not_to change(Report, :count)
+      end
+
+      it 'returns unprocessable entity status' do
+        post reports_path, params: nonexistent_params
         expect(response).to have_http_status(:unprocessable_entity)
       end
     end
