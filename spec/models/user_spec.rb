@@ -63,25 +63,25 @@ RSpec.describe User, type: :model do
 
   describe '#admin?' do
     it 'returns true when role is admin' do
-      user = described_class.new(email: 'admin@example.com', password: 'secret', role: 'admin')
+      user = described_class.new(email: 'admin@example.com', password: 'Secretpass1', role: 'admin')
     end
 
     it 'returns false when role is not admin' do
-      user = described_class.new(email: 'member@example.com', password: 'secret', role: 'member')
+      user = described_class.new(email: 'member@example.com', password: 'Secretpass1', role: 'member')
       expect(user.admin?).to be(false)
     end
   end
 
   describe 'suspension' do
     it 'defaults to active' do
-      user = described_class.new(email: 'test@example.com', password: 'secret')
+      user = described_class.new(email: 'test@example.com', password: 'Secretpass1')
 
       expect(user).not_to be_suspended
       expect(user).to be_active
     end
 
     it 'can be suspended and unsuspended' do
-      user = described_class.create!(email: 'test@example.com', password: 'secret')
+      user = described_class.create!(email: 'test@example.com', password: 'Secretpass1')
 
       user.suspend!
       expect(user).to be_suspended
@@ -95,11 +95,11 @@ RSpec.describe User, type: :model do
 
   describe '#destroyable_by?' do
     let(:admin) do
-      described_class.create!(email: 'admin@example.com', password: 'secret', role: 'admin')
+      described_class.create!(email: 'admin@example.com', password: 'Secretpass1', role: 'admin')
     end
 
     let(:other_admin) do
-      described_class.create!(email: 'other@example.com', password: 'secret', role: 'admin')
+      described_class.create!(email: 'other@example.com', password: 'Secretpass1', role: 'admin')
     end
 
     it 'returns false when an admin attempts to delete themselves' do

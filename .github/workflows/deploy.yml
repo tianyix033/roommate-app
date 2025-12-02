@@ -23,6 +23,10 @@ jobs:
       HEROKU_APP_NAME: ${{ vars.HEROKU_APP_NAME }}
       HEROKU_EMAIL: ${{ vars.HEROKU_EMAIL }}
     steps:
+      # Heroku are not default for ubuntu actions anymore, see https://github.com/AkhileshNS/heroku-deploy/issues/188
+      - name: Install Heroku CLI
+        run: curl https://cli-assets.heroku.com/install.sh | sh 
+        
       - name: Checkout code
         uses: actions/checkout@v4
 
