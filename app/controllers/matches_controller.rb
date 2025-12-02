@@ -1,5 +1,4 @@
 class MatchesController < ApplicationController
-  layout false
   before_action :require_login, only: [:index, :show, :like, :generate]
 
   def index

@@ -18,12 +18,15 @@ Rails.application.routes.draw do
 
   resource :profile, only: [:show, :edit, :update]
 
-  get '/search/listings', to: 'listings#search'
   resources :listings, only: [:index, :show, :new, :create, :edit, :update, :destroy] do
+    collection do
+      get :search
+    end
     member do
       patch :verify, to: 'verification_requests#verify'
     end
   end
+  get '/search/listings', to: 'listings#search', as: :search_listings_alt
   resources :verification_requests, only: [:index]
   
   resources :matches, only: [:index, :show] do

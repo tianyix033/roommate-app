@@ -221,8 +221,7 @@ RSpec.describe "Listings", type: :request do
       expect(response).to have_http_status(:success)
       expect(response.body).to include(listing.title)
       expect(response.body).to include(listing.description)
-      # Price is displayed as "$800" (formatted without decimals) in the redesigned UI
-      expect(response.body).to include("$#{listing.price.to_i}")
+      expect(response.body).to include(listing.price.to_s)
       expect(response.body).to include(listing.city)
     end
 

@@ -20,14 +20,7 @@ When(/I (?:update|attempt to update) my profile with:/) do |table|
   visit edit_profile_path
   @previous_profile_snapshot = @user.attributes.slice(*attributes.keys).transform_values(&:to_s)
   attributes.each do |field, value|
-    # Use field name directly (e.g., 'user_display_name') or try label text
-    field_id = "user_#{field}"
-    begin
-      fill_in field_id, with: value
-    rescue Capybara::ElementNotFound
-      # Fallback to label text if field ID doesn't work
-      fill_in field.humanize, with: value
-    end
+    fill_in field.humanize, with: value
   end
   click_button 'Save Profile'
   @last_submitted_profile = attributes
@@ -57,17 +50,14 @@ end
 
 Given('I have uploaded a profile picture') do
   visit edit_profile_path
-  # Find the hidden file input and attach file to it
-  file_input = find('#user_avatar', visible: false)
-  file_input.attach_file(Rails.root.join('features', 'screenshots', 'create_listing_1.jpg').to_s)
+  attach_file 'Avatar', Rails.root.join('features', 'screenshots', 'create_listing_1.jpg')
   click_button 'Save Profile'
   @user.reload
 end
 
 When('I remove my profile picture') do
   visit edit_profile_path
-  # Click the delete icon button (trash icon) which is only visible when avatar exists
-  find('button[title="Remove profile picture"]').click
+  click_button 'Remove Profile Picture'
 end
 
 Then('I should see a profile picture placeholder') do
