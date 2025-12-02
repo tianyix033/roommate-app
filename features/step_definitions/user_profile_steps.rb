@@ -20,9 +20,14 @@ When(/I (?:update|attempt to update) my profile with:/) do |table|
   visit edit_profile_path
   @previous_profile_snapshot = @user.attributes.slice(*attributes.keys).transform_values(&:to_s)
   attributes.each do |field, value|
-    # Match the uppercase label format used in the UI
-    label_text = field.humanize
-    fill_in label_text, with: value
+    # Use field name directly (e.g., 'user_display_name') or try label text
+    field_id = "user_#{field}"
+    begin
+      fill_in field_id, with: value
+    rescue Capybara::ElementNotFound
+      # Fallback to label text if field ID doesn't work
+      fill_in field.humanize, with: value
+    end
   end
   click_button 'Save Profile'
   @last_submitted_profile = attributes
