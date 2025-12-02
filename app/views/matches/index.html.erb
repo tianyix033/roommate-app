@@ -1,37 +1,186 @@
-<p id="notice"><%= notice %></p>
-<p id="alert"><%= alert %></p>
-
-<h1>Potential Matches</h1>
-
-<div class="actions">
-  <%= button_to "Find Matches", generate_matches_path, method: :post, class: "btn btn-primary" %>
-</div>
-
-<% if @no_matches_message %>
-  <div class="no-matches">
-    <p><%= @no_matches_message %></p>
-    <% if @suggestions_message %>
-      <p>Update your profile preferences</p>
-    <% end %>
-  </div>
-<% else %>
-  <div class="matches-list">
-    <% @matches.each do |match| %>
-      <div class="match-card">
-        <h3><%= link_to match.matched_user.display_name, match_path(match) %></h3>
-        <p><strong>Compatibility Score:</strong> <%= match.compatibility_score %>%</p>
-        <% if match.matched_user.preferred_location.present? %>
-          <p><strong>Location:</strong> <%= match.matched_user.preferred_location %></p>
-        <% end %>
-        <% if match.matched_user.budget.present? %>
-          <p><strong>Budget:</strong> $<%= match.matched_user.budget %></p>
-        <% end %>
-        <p>
-          <%= link_to "View Details", match_path(match), class: "btn btn-primary" %>
-          <%= button_to "Like", like_match_path(match), method: :post, class: "btn btn-secondary" %>
-        </p>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Find Matches · RoomMate</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              outfit: ['Outfit', 'sans-serif']
+            }
+          }
+        }
+      };
+    </script>
+    <style>
+      .card {
+        background: rgba(0, 0, 0, 0.6);
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      .card:hover {
+        transform: translateY(-8px) scale(1.02);
+        border-color: rgba(255, 255, 255, 0.6);
+        background: rgba(0, 0, 0, 0.9);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.1);
+      }
+      .btn-pop {
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      .btn-pop:hover {
+        transform: scale(1.05);
+      }
+      .btn-pop:active {
+        transform: scale(0.98);
+      }
+      .fade-in {
+        animation: fadeIn 0.6s ease-in-out;
+      }
+      .fade-in-delay-1 {
+        animation: fadeIn 0.6s ease-in-out 0.1s both;
+      }
+      .fade-in-delay-2 {
+        animation: fadeIn 0.6s ease-in-out 0.2s both;
+      }
+      .fade-in-delay-3 {
+        animation: fadeIn 0.6s ease-in-out 0.3s both;
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+    </style>
+  </head>
+  <body class="min-h-screen bg-black font-outfit text-white">
+    <!-- Navigation -->
+    <nav style="background-color: oklch(26.9% 0 0);">
+      <div class="max-w-7xl mx-auto px-6 py-4">
+        <div class="flex items-center justify-between">
+          <a href="/" class="text-2xl font-bold text-white">Room<span class="text-[#FFFC00]">Mate</span></a>
+          <div class="flex items-center gap-4">
+            <a href="/dashboard" class="text-white/60 hover:text-white transition-colors text-sm">Dashboard</a>
+            <%= button_to auth_logout_path, method: :post, class: "btn-pop flex items-center gap-2 px-4 py-2 rounded-lg bg-white text-black hover:bg-white/90 text-sm cursor-pointer font-medium" do %>
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+              </svg>
+              <span>Log out</span>
+            <% end %>
+          </div>
+        </div>
       </div>
-    <% end %>
-  </div>
-<% end %>
+    </nav>
 
+    <div class="max-w-7xl mx-auto px-6 py-12">
+      <!-- Header -->
+      <div class="mb-8 fade-in">
+        <h1 class="text-4xl font-bold text-white mb-4">Find Matches</h1>
+        <p class="text-white/60 text-lg">Discover compatible roommates based on your preferences</p>
+      </div>
+
+      <!-- Flash Messages -->
+      <% if notice.present? %>
+        <div class="mb-8 flex items-center gap-3 rounded-xl bg-white/10 border border-white/20 px-5 py-4 text-sm text-white fade-in">
+          <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+          <span><%= notice %></span>
+        </div>
+      <% end %>
+
+      <% if alert.present? %>
+        <div class="mb-8 flex items-center gap-3 rounded-xl bg-white/10 border border-white/20 px-5 py-4 text-sm text-white fade-in">
+          <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+          <span><%= alert %></span>
+        </div>
+      <% end %>
+
+      <!-- Find Matches Button -->
+      <div class="mb-8 fade-in-delay-1">
+        <%= button_to "Find Matches", generate_matches_path, method: :post, class: "btn-pop px-6 py-3 rounded-lg bg-white text-black hover:bg-white/90 font-medium" %>
+      </div>
+
+      <!-- Matches List or No Matches Message -->
+      <% if @no_matches_message %>
+        <div class="card rounded-2xl p-12 text-center fade-in-delay-2">
+          <div class="w-16 h-16 rounded-full bg-white/10 flex items-center justify-center mx-auto mb-6">
+            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+            </svg>
+          </div>
+          <h2 class="text-2xl font-bold text-white mb-4"><%= @no_matches_message %></h2>
+          <% if @suggestions_message %>
+            <p class="text-white/60 mb-6">Update your profile preferences to find better matches</p>
+            <a href="/profile/edit" class="btn-pop inline-block px-6 py-3 rounded-lg border border-white/10 text-white hover:bg-white/5">
+              Update Profile
+            </a>
+          <% end %>
+        </div>
+      <% elsif @matches.any? %>
+        <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <% @matches.each_with_index do |match, index| %>
+            <% delay_class = case index % 3
+                when 0 then "fade-in-delay-1"
+                when 1 then "fade-in-delay-2"
+                else "fade-in-delay-3"
+              end %>
+            <div class="card rounded-2xl p-6 <%= delay_class %>">
+              <div class="text-center mb-4">
+                <div class="w-16 h-16 rounded-full bg-white/10 flex items-center justify-center mx-auto mb-4">
+                  <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                  </svg>
+                </div>
+                <h3 class="text-xl font-bold text-white mb-2">
+                  <%= link_to match.matched_user.display_name || match.matched_user.email, match_path(match), class: "hover:text-[#FFFC00] transition-colors" %>
+                </h3>
+                <div class="text-3xl font-bold text-[#FFFC00] mb-4">
+                  <%= match.compatibility_score %>%
+                </div>
+              </div>
+              
+              <div class="space-y-2 mb-6 text-sm">
+                <% if match.matched_user.preferred_location.present? %>
+                  <div class="flex items-center gap-2 text-white/60">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                    </svg>
+                    <span><%= match.matched_user.preferred_location %></span>
+                  </div>
+                <% end %>
+                <% if match.matched_user.budget.present? %>
+                  <div class="flex items-center gap-2 text-white/60">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <span>$<%= match.matched_user.budget %>/month</span>
+                  </div>
+                <% end %>
+              </div>
+
+              <div class="flex gap-3">
+                <%= link_to "View Details", match_path(match), class: "btn-pop flex-1 text-center px-4 py-2 rounded-lg border border-white/10 text-white hover:bg-white/5 text-sm" %>
+                <%= button_to "Like", like_match_path(match), method: :post, class: "btn-pop flex-1 px-4 py-2 rounded-lg bg-white text-black hover:bg-white/90 text-sm font-medium" %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  </body>
+</html>

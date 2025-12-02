@@ -1,38 +1,172 @@
-<p id="notice"><%= notice %></p>
-<p id="alert"><%= alert %></p>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sign Up · RoomMate</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              outfit: ['Outfit', 'sans-serif']
+            },
+            colors: {
+              midnight: "#0b1021",
+              lavender: "#d8d6ff",
+              mint: "#9ef0d4",
+              amber: "#f6c177",
+              coral: "#ff6b6b"
+            }
+          }
+        }
+      };
+    </script>
+    <style>
+      .glass-card {
+        background: rgba(0, 0, 0, 0.8);
+        border: 2px solid rgba(255, 255, 255, 0.3);
+      }
+      .input-glow:focus {
+        box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.2);
+      }
+    </style>
+  </head>
+  <body class="min-h-screen bg-black font-outfit">
+    <div class="relative min-h-screen flex items-center px-6 py-12">
+      <div class="w-full max-w-6xl mx-auto">
+        <div class="grid lg:grid-cols-2 gap-12 items-center">
+          <!-- Logo / Brand -->
+          <div class="flex flex-col justify-center">
+            <a href="/" class="inline-flex items-center gap-3 group mb-8">
+              <span class="text-6xl font-bold text-white">Room<span class="text-[#FFFC00]">Mate</span></span>
+            </a>
+            <p class="text-xl text-white/60 leading-relaxed">
+              Join RoomMate and start your journey to finding the perfect roommate match.
+            </p>
+          </div>
 
-<h1>Sign up</h1>
+          <!-- Sign Up Card -->
+          <div class="glass-card rounded-3xl p-8 shadow-2xl">
+          <div class="text-center mb-8">
+            <h1 class="text-2xl font-semibold text-white mb-2">Join RoomMate</h1>
+            <p class="text-white/60 text-sm">Start your journey to find the perfect roommate</p>
+          </div>
 
-<%= form_with model: @user, url: auth_register_path, local: true do |form| %>
-  <% if @user.errors.any? %>
-    <div class="errors">
-      <ul>
-        <% @user.errors.full_messages.each do |message| %>
-          <li><%= message %></li>
-        <% end %>
-      </ul>
+          <!-- Flash Messages -->
+          <% if notice.present? %>
+            <div class="mb-6 flex items-center gap-3 rounded-xl bg-white/10 border border-white/20 px-4 py-3 text-sm text-white">
+              <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+              <span><%= notice %></span>
+            </div>
+          <% end %>
+
+          <% if alert.present? %>
+            <div class="mb-6 flex items-center gap-3 rounded-xl bg-white/10 border border-white/20 px-4 py-3 text-sm text-white">
+              <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+              <span><%= alert %></span>
+            </div>
+          <% end %>
+
+          <!-- Error Messages -->
+          <% if @user.errors.any? %>
+            <div class="mb-6 rounded-xl bg-white/10 border border-white/20 p-4">
+              <div class="flex items-center gap-2 text-white font-medium mb-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                </svg>
+                <span>Please fix the following:</span>
+              </div>
+              <ul class="space-y-1 text-sm text-white/80 ml-7">
+                <% @user.errors.full_messages.each do |message| %>
+                  <li class="flex items-center gap-2">
+                    <span class="w-1 h-1 rounded-full bg-white"></span>
+                    <%= message %>
+                  </li>
+                <% end %>
+              </ul>
+            </div>
+          <% end %>
+
+          <%= form_with model: @user, url: auth_register_path, local: true, class: "space-y-5" do |form| %>
+            <div class="space-y-2">
+              <%= form.label :email, class: "block text-sm font-medium text-white/80" do %>
+                <span class="flex items-center gap-2">
+                  <svg class="w-4 h-4 text-white/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                  </svg>
+                  Email
+                </span>
+              <% end %>
+              <%= form.email_field :email, 
+                  placeholder: "you@example.com",
+                  class: "input-glow w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-white placeholder-white/40 outline-none transition-all focus:border-white/30 focus:bg-white/10" %>
+            </div>
+
+            <div class="space-y-2">
+              <%= form.label :password, class: "block text-sm font-medium text-white/80" do %>
+                <span class="flex items-center gap-2">
+                  <svg class="w-4 h-4 text-white/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                  </svg>
+                  Password
+                </span>
+              <% end %>
+              <%= form.password_field :password,
+                  placeholder: "••••••••",
+                  class: "input-glow w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-white placeholder-white/40 outline-none transition-all focus:border-white/30 focus:bg-white/10" %>
+            </div>
+
+            <div class="space-y-2">
+              <%= form.label :password_confirmation, class: "block text-sm font-medium text-white/80" do %>
+                <span class="flex items-center gap-2">
+                  <svg class="w-4 h-4 text-white/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                  </svg>
+                  Confirm Password
+                </span>
+              <% end %>
+              <%= form.password_field :password_confirmation,
+                  placeholder: "••••••••",
+                  class: "input-glow w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-white placeholder-white/40 outline-none transition-all focus:border-white/30 focus:bg-white/10" %>
+            </div>
+
+            <div class="pt-2">
+              <%= form.submit "Create Account", 
+                  class: "w-full rounded-xl bg-white py-3.5 font-semibold text-black cursor-pointer transition-all hover:bg-white/90 hover:shadow-lg hover:shadow-white/20 active:scale-[0.98]" %>
+            </div>
+          <% end %>
+
+          <!-- Divider -->
+          <div class="relative my-8">
+            <div class="absolute inset-0 flex items-center">
+              <div class="w-full border-t border-white/10"></div>
+            </div>
+            <div class="relative flex justify-center">
+              <span class="bg-black px-4 text-xs text-white/40 uppercase tracking-wider">Already a member?</span>
+            </div>
+          </div>
+
+          <!-- Sign In Link -->
+          <p class="text-center">
+            <%= link_to auth_login_path, class: "inline-flex items-center gap-2 text-white/70 hover:text-white transition-colors group" do %>
+              <svg class="w-4 h-4 transform group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16l-4-4m0 0l4-4m-4 4h18"/>
+              </svg>
+              <span>Sign in to your account</span>
+            <% end %>
+          </p>
+          </div>
+        </div>
+      </div>
     </div>
-  <% end %>
-
-  <div>
-    <%= form.label :email, "Email" %><br>
-    <%= form.email_field :email %>
-  </div>
-
-  <div>
-    <%= form.label :password, "Password" %><br>
-    <%= form.password_field :password %>
-  </div>
-
-  <div>
-    <%= form.label :password_confirmation, "Password confirmation" %><br>
-    <%= form.password_field :password_confirmation %>
-  </div>
-
-  <div>
-    <%= form.submit "Sign up" %>
-  </div>
-<% end %>
-
-<p>Already have an account? <%= link_to 'Log in', auth_login_path %></p>
-
+  </body>
+</html>

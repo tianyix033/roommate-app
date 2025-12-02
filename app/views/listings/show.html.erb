@@ -1,20 +1,182 @@
-<p id="notice"><%= notice %></p>
-<h1><%= @listing.title %></h1>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= @listing.title %> · RoomMate</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              outfit: ['Outfit', 'sans-serif']
+            }
+          }
+        }
+      };
+    </script>
+    <style>
+      .card {
+        background: rgba(0, 0, 0, 0.6);
+        border: 2px solid rgba(255, 255, 255, 0.3);
+      }
+      .btn-pop {
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      .btn-pop:hover {
+        transform: scale(1.05);
+      }
+      .btn-pop:active {
+        transform: scale(0.98);
+      }
+      .fade-in {
+        animation: fadeIn 0.6s ease-in-out;
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+    </style>
+  </head>
+  <body class="min-h-screen bg-black font-outfit text-white">
+    <!-- Navigation -->
+    <nav style="background-color: oklch(26.9% 0 0);">
+      <div class="max-w-7xl mx-auto px-6 py-4">
+        <div class="flex items-center justify-between">
+          <a href="/" class="text-2xl font-bold text-white">Room<span class="text-[#FFFC00]">Mate</span></a>
+          <div class="flex items-center gap-4">
+            <a href="/listings" class="text-white/60 hover:text-white transition-colors text-sm">Back to Listings</a>
+            <%= button_to auth_logout_path, method: :post, class: "btn-pop flex items-center gap-2 px-4 py-2 rounded-lg bg-white text-black hover:bg-white/90 text-sm cursor-pointer font-medium" do %>
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+              </svg>
+              <span>Log out</span>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </nav>
 
-<% if @listing.verified %>
-  <span>Verified</span>
-<% end %>
+    <div class="max-w-4xl mx-auto px-6 py-12">
+      <!-- Flash Messages -->
+      <% if notice.present? %>
+        <div class="mb-8 flex items-center gap-3 rounded-xl bg-white/10 border border-white/20 px-5 py-4 text-sm text-white fade-in">
+          <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+          <span><%= notice %></span>
+        </div>
+      <% end %>
 
-<p><strong>Owner:</strong> <%= @listing.owner_email %></p>
-<p><strong>Status:</strong> <%= @listing.status %></p>
-<p><strong>Description:</strong> <%= @listing.description %></p>
-<p><strong>Price:</strong> <%= @listing.price %></p>
-<p><strong>City:</strong> <%= @listing.city %></p>
+      <!-- Back Link -->
+      <div class="mb-8 fade-in">
+        <a href="/listings" class="inline-flex items-center gap-2 text-white/60 hover:text-white transition-colors">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+          </svg>
+          <span>Back to Listings</span>
+        </a>
+      </div>
 
-<%= link_to 'Edit', edit_listing_path(@listing) %> |
-<%= link_to 'Back', listings_path %> |
-<%= button_to 'Delete', listing_path(@listing), method: :delete, data: { confirm: 'Are you sure?' } %>
+      <!-- Listing Header -->
+      <div class="mb-8 fade-in">
+        <div class="flex items-start justify-between mb-4">
+          <div class="flex-1">
+            <% if @listing.verified %>
+              <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-[#FFFC00]/20 border border-[#FFFC00]/30 text-[#FFFC00] text-xs font-semibold mb-4">
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                </svg>
+                Verified
+              </span>
+            <% end %>
+            <h1 class="text-4xl font-bold text-white mb-4"><%= @listing.title %></h1>
+            <div class="flex items-center gap-4 text-3xl font-bold text-[#FFFC00]">
+              $<%= number_with_precision(@listing.price, precision: 0) %>
+              <span class="text-white/60 text-lg font-normal">/month</span>
+            </div>
+          </div>
+          <% if @listing.user_id == current_user&.id %>
+            <div class="flex gap-2">
+              <%= link_to "Edit", edit_listing_path(@listing), class: "btn-pop px-4 py-2 rounded-lg border border-white/10 text-white hover:bg-white/5 text-sm" %>
+            </div>
+          <% end %>
+        </div>
+      </div>
 
-<% if @listing.verification_requested && !@listing.verified %>
-  <%= button_to 'Mark as Verified', verify_listing_path(@listing), method: :patch %>
-<% end %>
+      <!-- Listing Details Card -->
+      <div class="card rounded-2xl p-8 mb-6 fade-in">
+        <h2 class="text-xl font-bold text-white mb-6">Details</h2>
+        <div class="grid md:grid-cols-2 gap-6">
+          <% if @listing.city.present? %>
+            <div>
+              <div class="flex items-center gap-2 text-white/60 text-sm mb-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                </svg>
+                <span>City</span>
+              </div>
+              <p class="text-white"><%= @listing.city %></p>
+            </div>
+          <% end %>
+          <% if @listing.status.present? %>
+            <div>
+              <div class="flex items-center gap-2 text-white/60 text-sm mb-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                <span>Status</span>
+              </div>
+              <p class="text-white capitalize"><%= @listing.status %></p>
+            </div>
+          <% end %>
+          <% if @listing.owner_email.present? %>
+            <div>
+              <div class="flex items-center gap-2 text-white/60 text-sm mb-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                </svg>
+                <span>Owner</span>
+              </div>
+              <p class="text-white"><%= @listing.owner_email %></p>
+            </div>
+          <% end %>
+        </div>
+        <% if @listing.description.present? %>
+          <div class="mt-6 pt-6 border-t border-white/10">
+            <div class="text-white/60 text-sm mb-2">Description</div>
+            <p class="text-white leading-relaxed"><%= @listing.description %></p>
+          </div>
+        <% end %>
+      </div>
+
+      <!-- Verification Section (for Community Verifiers) -->
+      <% if @listing.verification_requested && !@listing.verified && current_user&.role == 'admin' %>
+        <div class="card rounded-2xl p-8 mb-6 fade-in">
+          <h2 class="text-xl font-bold text-white mb-4">Verification Request</h2>
+          <p class="text-white/60 mb-6">This listing has requested verification. Review and mark as verified if it meets the requirements.</p>
+          <%= button_to "Mark as Verified", verify_listing_path(@listing), method: :patch, class: "btn-pop px-6 py-3 rounded-lg bg-white text-black hover:bg-white/90 font-medium" %>
+        </div>
+      <% end %>
+
+      <!-- Actions -->
+      <div class="flex gap-4 fade-in">
+        <%= link_to "Back to Listings", listings_path, class: "btn-pop flex-1 text-center px-6 py-3 rounded-lg border border-white/10 text-white hover:bg-white/5" %>
+        <% if @listing.user_id == current_user&.id %>
+          <%= button_to "Delete", listing_path(@listing), method: :delete, data: { confirm: 'Are you sure?' }, class: "btn-pop px-6 py-3 rounded-lg border border-white/10 text-white hover:bg-white/5" %>
+        <% end %>
+      </div>
+    </div>
+  </body>
+</html>

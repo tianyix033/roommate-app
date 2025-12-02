@@ -1,14 +1,199 @@
-<p id="notice"><%= notice %></p>
-<p id="alert"><%= alert %></p>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard · RoomMate</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              outfit: ['Outfit', 'sans-serif']
+            },
+            colors: {
+              midnight: "#0b1021",
+              lavender: "#d8d6ff",
+              mint: "#9ef0d4",
+              amber: "#f6c177",
+              coral: "#ff6b6b"
+            }
+          }
+        }
+      };
+    </script>
+    <style>
+      .glass-card {
+        background: rgba(0, 0, 0, 0.8);
+        border: 2px solid rgba(255, 255, 255, 0.3);
+      }
+      .action-card {
+        position: relative;
+        background: rgba(0, 0, 0, 0.6);
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      .action-card:hover {
+        transform: translateY(-8px) scale(1.02);
+        border-color: rgba(255, 255, 255, 0.6);
+        background: rgba(0, 0, 0, 0.9);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.1);
+      }
+      .fade-in {
+        animation: fadeIn 0.6s ease-in-out;
+      }
+      .fade-in-delay-1 {
+        animation: fadeIn 0.6s ease-in-out 0.1s both;
+      }
+      .fade-in-delay-2 {
+        animation: fadeIn 0.6s ease-in-out 0.2s both;
+      }
+      .fade-in-delay-3 {
+        animation: fadeIn 0.6s ease-in-out 0.3s both;
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+    </style>
+  </head>
+  <body class="min-h-screen bg-black font-outfit">
+    <!-- Navigation Bar -->
+    <nav class="relative z-10" style="background-color: oklch(26.9% 0 0);">
+      <div class="max-w-6xl mx-auto px-6 py-4">
+        <div class="flex items-center justify-between">
+          <a href="/" class="text-2xl font-bold text-white">Room<span class="text-[#FFFC00]">Mate</span></a>
+          <div class="flex items-center gap-4">
+            <span class="text-white/60 text-sm hidden sm:block">
+              <%= current_user&.display_name.presence || current_user&.email %>
+            </span>
+            <%= button_to auth_logout_path, method: :post, class: "flex items-center gap-2 px-4 py-2 rounded-lg bg-white text-black hover:bg-white/90 transition-all text-sm cursor-pointer font-medium" do %>
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+              </svg>
+              <span>Log out</span>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </nav>
 
-<h1>Dashboard</h1>
+    <div class="relative z-10 max-w-6xl mx-auto px-6 py-12">
+      <!-- Flash Messages (only show alerts, not login notices) -->
+      <% if alert.present? %>
+        <div class="mb-8 flex items-center gap-3 rounded-xl bg-white/10 border border-white/20 px-5 py-4 text-sm text-white fade-in">
+          <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+          <span><%= alert %></span>
+        </div>
+      <% end %>
 
-<p>
-  Welcome,
-  <%= current_user&.display_name.presence || current_user&.email || "Guest" %>!
-</p>
+      <!-- Welcome Section -->
+      <div class="mb-12 fade-in">
+        <h1 class="text-4xl font-bold text-white mb-3">
+          Welcome back
+        </h1>
+        <p class="text-white/60 text-lg">Find your perfect roommate and explore listings</p>
+      </div>
 
-<p>You can access your profile and find compatible matches from here.</p>
+      <!-- Quick Actions Grid -->
+      <div class="grid gap-8 md:grid-cols-2 lg:grid-cols-3 mb-12">
+        <!-- Find Matches Card -->
+        <a href="/matches" class="action-card rounded-3xl p-8 group flex flex-col h-full text-center fade-in-delay-1">
+          <div class="flex-1">
+            <div class="w-16 h-16 rounded-2xl bg-white/10 flex items-center justify-center mb-6 mx-auto group-hover:scale-110 group-hover:bg-white/20 transition-all duration-300">
+              <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+              </svg>
+            </div>
+            <h3 class="text-xl font-bold text-white mb-3">Find Matches</h3>
+            <p class="text-white/60 text-sm leading-relaxed mb-6">Discover compatible roommates based on your lifestyle and preferences</p>
+          </div>
+          <div class="flex items-center justify-center gap-2 text-white font-semibold mt-auto">
+            <span>View matches</span>
+            <svg class="w-5 h-5 group-hover:translate-x-2 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+            </svg>
+          </div>
+        </a>
 
-<%= button_to 'Log out', auth_logout_path, method: :post %>
+        <!-- Browse Listings Card -->
+        <a href="/listings" class="action-card rounded-3xl p-8 group flex flex-col h-full text-center fade-in-delay-2">
+          <div class="flex-1">
+            <div class="w-16 h-16 rounded-2xl bg-white/10 flex items-center justify-center mb-6 mx-auto group-hover:scale-110 group-hover:bg-white/20 transition-all duration-300">
+              <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+              </svg>
+            </div>
+            <h3 class="text-xl font-bold text-white mb-3">Browse Listings</h3>
+            <p class="text-white/60 text-sm leading-relaxed mb-6">Explore available rooms and apartments in your desired area</p>
+          </div>
+          <div class="flex items-center justify-center gap-2 text-white font-semibold mt-auto">
+            <span>View listings</span>
+            <svg class="w-5 h-5 group-hover:translate-x-2 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+            </svg>
+          </div>
+        </a>
 
+        <!-- My Profile Card -->
+        <a href="/profile" class="action-card rounded-3xl p-8 group flex flex-col h-full text-center fade-in-delay-3">
+          <div class="flex-1">
+            <div class="w-16 h-16 rounded-2xl bg-white/10 flex items-center justify-center mb-6 mx-auto group-hover:scale-110 group-hover:bg-white/20 transition-all duration-300">
+              <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+              </svg>
+            </div>
+            <h3 class="text-xl font-bold text-white mb-3">My Profile</h3>
+            <p class="text-white/60 text-sm leading-relaxed mb-6">Update your preferences, bio, and personal information</p>
+          </div>
+          <div class="flex items-center justify-center gap-2 text-white font-semibold mt-auto">
+            <span>Edit profile</span>
+            <svg class="w-5 h-5 group-hover:translate-x-2 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+            </svg>
+          </div>
+        </a>
+      </div>
+
+      <!-- Stats Section -->
+      <div class="glass-card rounded-2xl border border-white/10 p-6 fade-in-delay-3">
+        <h2 class="text-lg font-semibold text-white mb-6">Your Activity</h2>
+        <div class="grid gap-6 sm:grid-cols-3">
+          <div class="text-center sm:text-left">
+            <div class="text-3xl font-bold text-white mb-1">0</div>
+            <div class="text-white/50 text-sm">Potential Matches</div>
+          </div>
+          <div class="text-center sm:text-left">
+            <div class="text-3xl font-bold text-white mb-1">0</div>
+            <div class="text-white/50 text-sm">Saved Listings</div>
+          </div>
+          <div class="text-center sm:text-left">
+            <div class="text-3xl font-bold text-white mb-1">0</div>
+            <div class="text-white/50 text-sm">Messages</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="relative z-10 border-t border-white/10 mt-12">
+      <div class="max-w-6xl mx-auto px-6 py-6">
+        <p class="text-center text-white/40 text-sm">
+          RoomMate - Find your perfect roommate match
+        </p>
+      </div>
+    </footer>
+  </body>
+</html>

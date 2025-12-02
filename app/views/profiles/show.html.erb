@@ -1,41 +1,188 @@
-<section class="profile">
-  <% if notice.present? %>
-    <p class="flash flash--notice"><%= notice %></p>
-  <% end %>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My Profile · RoomMate</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              outfit: ['Outfit', 'sans-serif']
+            }
+          }
+        }
+      };
+    </script>
+    <style>
+      .card {
+        background: rgba(0, 0, 0, 0.6);
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      .card:hover {
+        transform: translateY(-8px) scale(1.02);
+        border-color: rgba(255, 255, 255, 0.6);
+        background: rgba(0, 0, 0, 0.9);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.1);
+      }
+      .btn-pop {
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      .btn-pop:hover {
+        transform: scale(1.05);
+      }
+      .btn-pop:active {
+        transform: scale(0.98);
+      }
+      .fade-in {
+        animation: fadeIn 0.6s ease-in-out;
+      }
+      .fade-in-delay-1 {
+        animation: fadeIn 0.6s ease-in-out 0.1s both;
+      }
+      .fade-in-delay-2 {
+        animation: fadeIn 0.6s ease-in-out 0.2s both;
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+    </style>
+  </head>
+  <body class="min-h-screen bg-black font-outfit text-white">
+    <!-- Navigation -->
+    <nav style="background-color: oklch(26.9% 0 0);">
+      <div class="max-w-7xl mx-auto px-6 py-4">
+        <div class="flex items-center justify-between">
+          <a href="/" class="text-2xl font-bold text-white">Room<span class="text-[#FFFC00]">Mate</span></a>
+          <div class="flex items-center gap-4">
+            <a href="/dashboard" class="text-white/60 hover:text-white transition-colors text-sm">Dashboard</a>
+            <%= button_to auth_logout_path, method: :post, class: "btn-pop flex items-center gap-2 px-4 py-2 rounded-lg bg-white text-black hover:bg-white/90 text-sm cursor-pointer font-medium" do %>
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+              </svg>
+              <span>Log out</span>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </nav>
 
-  <% if alert.present? %>
-    <p class="flash flash--alert"><%= alert %></p>
-  <% end %>
+    <div class="max-w-7xl mx-auto px-6 py-6">
+      <!-- Header -->
+      <div class="mb-4 fade-in">
+        <h1 class="text-4xl font-bold text-white mb-2">My Profile</h1>
+        <p class="text-white/60 text-lg">Manage your roommate preferences and profile information</p>
+      </div>
 
-  <h1>My Profile</h1>
+      <!-- Flash Messages -->
+      <% if notice.present? %>
+        <div class="mb-4 flex items-center gap-3 rounded-xl bg-white/10 border border-white/20 px-5 py-4 text-sm text-white fade-in">
+          <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+          <span><%= notice %></span>
+        </div>
+      <% end %>
 
-  <%= render 'avatar_preview', user: @user %>
+      <% if alert.present? %>
+        <div class="mb-4 flex items-center gap-3 rounded-xl bg-red-500/20 border border-red-500/30 px-5 py-4 text-sm text-red-300 fade-in">
+          <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+          <span><%= alert %></span>
+        </div>
+      <% end %>
 
-  <dl>
-    <dt>Display name</dt>
-    <dd><%= @user.display_name.presence || 'Not set' %></dd>
+      <!-- Profile Card -->
+      <div class="card rounded-2xl p-6 fade-in-delay-1">
+        <!-- Avatar Section -->
+        <div class="flex flex-col items-center mb-6">
+          <div class="w-32 h-32 rounded-full bg-white/10 border-2 border-white/20 mb-3 overflow-hidden relative">
+            <% if @user.avatar.present? %>
+              <img src="<%= @user.avatar.data_uri %>" alt="Profile picture" class="absolute inset-0 w-full h-full object-cover" />
+            <% else %>
+              <div data-testid="profile-picture-placeholder" class="flex items-center justify-center h-full text-white/40 text-sm text-center px-4">
+                No profile picture
+              </div>
+            <% end %>
+          </div>
+        </div>
 
-    <dt>Bio</dt>
-    <dd><%= @user.bio.presence || 'Not set' %></dd>
+        <!-- Profile Information -->
+        <div class="space-y-4">
+          <div class="grid gap-4 md:grid-cols-2">
+            <div>
+              <dt class="text-sm font-semibold text-white/60 mb-2 uppercase tracking-wide">Display Name</dt>
+              <dd class="text-lg text-white"><%= @user.display_name.presence || '<span class="text-white/40">Not set</span>'.html_safe %></dd>
+            </div>
 
-    <dt>Budget</dt>
-    <dd><%= @user.budget || 'Not set' %></dd>
+            <div>
+              <dt class="text-sm font-semibold text-white/60 mb-2 uppercase tracking-wide">Budget</dt>
+              <dd class="text-lg text-white">
+                <% if @user.budget %>
+                  <span class="text-[#FFFC00] font-semibold">$<%= number_with_precision(@user.budget, precision: 0) %></span>
+                  <span class="text-white/60">/month</span>
+                <% else %>
+                  <span class="text-white/40">Not set</span>
+                <% end %>
+              </dd>
+            </div>
 
-    <dt>Preferred location</dt>
-    <dd><%= @user.preferred_location.presence || 'Not set' %></dd>
+            <div>
+              <dt class="text-sm font-semibold text-white/60 mb-2 uppercase tracking-wide">Preferred Location</dt>
+              <dd class="text-lg text-white"><%= @user.preferred_location.presence || '<span class="text-white/40">Not set</span>'.html_safe %></dd>
+            </div>
 
-    <dt>Sleep schedule</dt>
-    <dd><%= @user.sleep_schedule.presence || 'Not set' %></dd>
+            <div>
+              <dt class="text-sm font-semibold text-white/60 mb-2 uppercase tracking-wide">Sleep Schedule</dt>
+              <dd class="text-lg text-white"><%= @user.sleep_schedule.presence || '<span class="text-white/40">Not set</span>'.html_safe %></dd>
+            </div>
 
-    <dt>Pets</dt>
-    <dd><%= @user.pets.presence || 'Not set' %></dd>
+            <div>
+              <dt class="text-sm font-semibold text-white/60 mb-2 uppercase tracking-wide">Pets</dt>
+              <dd class="text-lg text-white"><%= @user.pets.presence || '<span class="text-white/40">Not set</span>'.html_safe %></dd>
+            </div>
 
-    <dt>Housing status</dt>
-    <dd><%= @user.housing_status.presence || 'Not set' %></dd>
+            <div>
+              <dt class="text-sm font-semibold text-white/60 mb-2 uppercase tracking-wide">Housing Status</dt>
+              <dd class="text-lg text-white"><%= @user.housing_status.presence || '<span class="text-white/40">Not set</span>'.html_safe %></dd>
+            </div>
 
-    <dt>Contact visibility</dt>
-    <dd><%= @user.contact_visibility.presence || 'Not set' %></dd>
-  </dl>
+            <div>
+              <dt class="text-sm font-semibold text-white/60 mb-2 uppercase tracking-wide">Contact Visibility</dt>
+              <dd class="text-lg text-white"><%= @user.contact_visibility.presence || '<span class="text-white/40">Not set</span>'.html_safe %></dd>
+            </div>
+          </div>
 
-  <%= link_to 'Edit Profile', edit_profile_path, class: 'button' %>
-</section>
+          <div class="pt-3 border-t border-white/10">
+            <dt class="text-sm font-semibold text-white/60 mb-2 uppercase tracking-wide">Bio</dt>
+            <dd class="text-lg text-white leading-relaxed"><%= @user.bio.presence || '<span class="text-white/40">Not set</span>'.html_safe %></dd>
+          </div>
+        </div>
+
+        <!-- Action Button -->
+        <div class="mt-6 pt-4 border-t border-white/10">
+          <%= link_to edit_profile_path, class: "btn-pop inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-white text-black hover:bg-white/90 font-medium" do %>
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+            </svg>
+            <span>Edit Profile</span>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,122 +1,281 @@
-<section class="profile-edit">
-  <h1>Edit Profile</h1>
-
-  <% if @user.errors.any? %>
-    <div class="alert alert-danger">
-      <p>There were problems saving your profile:</p>
-      <ul>
-        <% @user.errors.full_messages.each do |message| %>
-          <li><%= message %></li>
-        <% end %>
-      </ul>
-    </div>
-  <% end %>
-
-  <%= form_with model: @user, url: profile_path, method: :patch, local: true, html: { multipart: true } do |form| %>
-    <div>
-      <%= form.label :display_name, 'Display name' %>
-      <%= form.text_field :display_name %>
-    </div>
-
-    <div>
-      <%= form.label :bio, 'Bio' %>
-      <%= form.text_area :bio %>
-    </div>
-
-    <div>
-      <%= form.label :budget, 'Budget' %>
-      <%= form.number_field :budget, min: 0 %>
-    </div>
-
-    <div>
-      <%= form.label :preferred_location, 'Preferred location' %>
-      <%= form.text_field :preferred_location %>
-    </div>
-
-    <div>
-      <%= form.label :sleep_schedule, 'Sleep schedule' %>
-      <%= form.text_field :sleep_schedule %>
-    </div>
-
-    <div>
-      <%= form.label :pets, 'Pets' %>
-      <%= form.text_field :pets %>
-    </div>
-
-    <div>
-      <%= form.label :housing_status, 'Housing status' %>
-      <%= form.text_field :housing_status %>
-    </div>
-
-    <div>
-      <%= form.label :contact_visibility, 'Contact visibility' %>
-      <%= form.text_field :contact_visibility %>
-    </div>
-
-    <div>
-      <%= form.label :avatar, 'Avatar' %>
-      <%= render 'avatar_preview', user: @user %>
-      <%= form.file_field :avatar, accept: 'image/*' %>
-    </div>
-
-    <div>
-      <%= form.submit 'Save Profile' %>
-    </div>
-  <% end %>
-
-  <%= button_to 'Remove Profile Picture', profile_path(remove_avatar: '1'), method: :patch, form: { data: { turbo: false } } %>
-
-  <%= link_to 'Back to Profile', profile_path %>
-</section>
-
-<script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const avatarInput = document.querySelector('#user_avatar');
-
-    if (!avatarInput) return;
-
-    avatarInput.addEventListener('change', event => {
-      const [file] = event.target.files || [];
-
-      if (!file || !file.type.startsWith('image/')) return;
-
-      const reader = new FileReader();
-      const image = new Image();
-
-      reader.onload = loadEvent => {
-        image.onload = () => {
-          const canvas = document.createElement('canvas');
-          canvas.width = 128;
-          canvas.height = 128;
-          const ctx = canvas.getContext('2d');
-          ctx.clearRect(0, 0, 128, 128);
-
-          const scale = Math.min(128 / image.width, 128 / image.height);
-          const width = image.width * scale;
-          const height = image.height * scale;
-          const offsetX = (128 - width) / 2;
-          const offsetY = (128 - height) / 2;
-
-          ctx.drawImage(image, offsetX, offsetY, width, height);
-
-          canvas.toBlob(blob => {
-            if (!blob) return;
-
-            const resizedFile = new File([blob], file.name.replace(/\.\w+$/, '.png'), {
-              type: 'image/png',
-              lastModified: Date.now()
-            });
-
-            const dataTransfer = new DataTransfer();
-            dataTransfer.items.add(resizedFile);
-            avatarInput.files = dataTransfer.files;
-          }, 'image/png');
-        };
-
-        image.src = loadEvent.target.result;
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Edit Profile · RoomMate</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              outfit: ['Outfit', 'sans-serif']
+            }
+          }
+        }
       };
+    </script>
+    <style>
+      .card {
+        background: rgba(0, 0, 0, 0.6);
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      .card:hover {
+        transform: translateY(-8px) scale(1.02);
+        border-color: rgba(255, 255, 255, 0.6);
+        background: rgba(0, 0, 0, 0.9);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.1);
+      }
+      .btn-pop {
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      .btn-pop:hover {
+        transform: scale(1.05);
+      }
+      .btn-pop:active {
+        transform: scale(0.98);
+      }
+      .fade-in {
+        animation: fadeIn 0.6s ease-in-out;
+      }
+      .fade-in-delay-1 {
+        animation: fadeIn 0.6s ease-in-out 0.1s both;
+      }
+      .fade-in-delay-2 {
+        animation: fadeIn 0.6s ease-in-out 0.2s both;
+      }
+      input[type="text"],
+      input[type="number"],
+      textarea {
+        background: rgba(0, 0, 0, 0.4);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: white;
+      }
+      input[type="text"]:focus,
+      input[type="number"]:focus,
+      textarea:focus {
+        outline: none;
+        border-color: rgba(255, 255, 255, 0.5);
+        background: rgba(0, 0, 0, 0.6);
+      }
+      input[type="file"] {
+        color: white;
+      }
+      input[type="file"]::file-selector-button {
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 0.5rem;
+        cursor: pointer;
+        margin-right: 0.5rem;
+      }
+      input[type="file"]::file-selector-button:hover {
+        background: rgba(255, 255, 255, 0.2);
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+    </style>
+  </head>
+  <body class="min-h-screen bg-black font-outfit text-white">
+    <!-- Navigation -->
+    <nav style="background-color: oklch(26.9% 0 0);">
+      <div class="max-w-7xl mx-auto px-6 py-4">
+        <div class="flex items-center justify-between">
+          <a href="/" class="text-2xl font-bold text-white">Room<span class="text-[#FFFC00]">Mate</span></a>
+          <div class="flex items-center gap-4">
+            <a href="/dashboard" class="text-white/60 hover:text-white transition-colors text-sm">Dashboard</a>
+            <%= button_to auth_logout_path, method: :post, class: "btn-pop flex items-center gap-2 px-4 py-2 rounded-lg bg-white text-black hover:bg-white/90 text-sm cursor-pointer font-medium" do %>
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+              </svg>
+              <span>Log out</span>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </nav>
 
-      reader.readAsDataURL(file);
-    });
-  });
-</script>
+    <div class="max-w-7xl mx-auto px-6 py-6">
+      <!-- Header -->
+      <div class="mb-4 fade-in">
+        <h1 class="text-4xl font-bold text-white mb-2">Edit Profile</h1>
+        <p class="text-white/60 text-lg">Update your roommate preferences and profile information</p>
+      </div>
+
+      <!-- Error Messages -->
+      <% if @user.errors.any? %>
+        <div class="mb-4 rounded-xl bg-red-500/20 border border-red-500/30 px-5 py-4 fade-in">
+          <div class="flex items-start gap-3">
+            <svg class="w-5 h-5 shrink-0 text-red-300 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            <div class="flex-1">
+              <p class="text-red-300 font-semibold mb-2">There were problems saving your profile:</p>
+              <ul class="list-disc list-inside space-y-1 text-red-200 text-sm">
+                <% @user.errors.full_messages.each do |message| %>
+                  <li><%= message %></li>
+                <% end %>
+              </ul>
+            </div>
+          </div>
+        </div>
+      <% end %>
+
+      <!-- Form Card -->
+      <div class="card rounded-2xl p-6 fade-in-delay-1">
+        <%= form_with model: @user, url: profile_path, method: :patch, local: true, html: { multipart: true, class: "space-y-4" } do |form| %>
+          <!-- Avatar Section -->
+          <div class="pb-4">
+            <label class="block text-sm font-semibold text-white/60 mb-3 uppercase tracking-wide">Avatar</label>
+            <div class="flex flex-col items-center gap-3">
+              <div class="relative">
+                <div class="w-32 h-32 rounded-full bg-white/10 border-2 border-white/20 overflow-hidden relative">
+                  <% if @user.avatar.present? %>
+                    <img src="<%= @user.avatar.data_uri %>" alt="Profile picture" class="absolute inset-0 w-full h-full object-cover" />
+                  <% else %>
+                    <div data-testid="profile-picture-placeholder" class="flex items-center justify-center h-full text-white/40 text-sm text-center px-4">
+                      No profile picture
+                    </div>
+                  <% end %>
+                </div>
+                <div class="absolute -bottom-2 left-1/2 -translate-x-1/2 flex items-center gap-2">
+                  <label for="user_avatar" class="w-8 h-8 rounded-full bg-white text-black flex items-center justify-center cursor-pointer hover:bg-white/90 transition-colors shadow-lg">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                    </svg>
+                  </label>
+                  <% if @user.avatar.present? %>
+                    <%= button_to profile_path(remove_avatar: '1'), method: :patch, form: { data: { turbo: false } }, class: "w-8 h-8 rounded-full bg-red-500/20 border border-red-500/30 text-red-300 flex items-center justify-center cursor-pointer hover:bg-red-500/30 transition-colors shadow-lg", title: "Remove profile picture" do %>
+                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                      </svg>
+                    <% end %>
+                  <% end %>
+                </div>
+                <%= form.file_field :avatar, accept: 'image/*', id: "user_avatar", class: "hidden" %>
+              </div>
+            </div>
+          </div>
+
+          <!-- Form Fields -->
+          <div class="grid gap-4 md:grid-cols-2">
+            <div>
+              <%= form.label :display_name, 'Display Name', class: "block text-sm font-semibold text-white/60 mb-2 uppercase tracking-wide" %>
+              <%= form.text_field :display_name, class: "w-full px-4 py-3 rounded-lg transition-colors" %>
+            </div>
+
+            <div>
+              <%= form.label :budget, 'Budget', class: "block text-sm font-semibold text-white/60 mb-2 uppercase tracking-wide" %>
+              <div class="relative">
+                <span class="absolute left-4 top-1/2 -translate-y-1/2 text-white/60">$</span>
+                <%= form.number_field :budget, min: 0, class: "w-full px-4 py-3 pl-8 rounded-lg transition-colors" %>
+              </div>
+            </div>
+
+            <div>
+              <%= form.label :preferred_location, 'Preferred Location', class: "block text-sm font-semibold text-white/60 mb-2 uppercase tracking-wide" %>
+              <%= form.text_field :preferred_location, class: "w-full px-4 py-3 rounded-lg transition-colors" %>
+            </div>
+
+            <div>
+              <%= form.label :sleep_schedule, 'Sleep Schedule', class: "block text-sm font-semibold text-white/60 mb-2 uppercase tracking-wide" %>
+              <%= form.text_field :sleep_schedule, class: "w-full px-4 py-3 rounded-lg transition-colors" %>
+            </div>
+
+            <div>
+              <%= form.label :pets, 'Pets', class: "block text-sm font-semibold text-white/60 mb-2 uppercase tracking-wide" %>
+              <%= form.text_field :pets, class: "w-full px-4 py-3 rounded-lg transition-colors" %>
+            </div>
+
+            <div>
+              <%= form.label :housing_status, 'Housing Status', class: "block text-sm font-semibold text-white/60 mb-2 uppercase tracking-wide" %>
+              <%= form.text_field :housing_status, class: "w-full px-4 py-3 rounded-lg transition-colors" %>
+            </div>
+
+            <div>
+              <%= form.label :contact_visibility, 'Contact Visibility', class: "block text-sm font-semibold text-white/60 mb-2 uppercase tracking-wide" %>
+              <%= form.text_field :contact_visibility, class: "w-full px-4 py-3 rounded-lg transition-colors" %>
+            </div>
+          </div>
+
+          <div>
+            <%= form.label :bio, 'Bio', class: "block text-sm font-semibold text-white/60 mb-2 uppercase tracking-wide" %>
+            <%= form.text_area :bio, rows: 4, class: "w-full px-4 py-3 rounded-lg transition-colors resize-none" %>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="flex flex-col sm:flex-row gap-4 pt-4">
+            <%= form.submit 'Save Profile', class: "btn-pop flex-1 px-6 py-3 rounded-lg bg-white text-black hover:bg-white/90 font-medium cursor-pointer" %>
+            <%= link_to 'Back to Profile', profile_path, class: "btn-pop flex-1 text-center px-6 py-3 rounded-lg border border-white/10 text-white hover:bg-white/5" %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const avatarInput = document.querySelector('#user_avatar');
+
+        if (!avatarInput) return;
+
+        avatarInput.addEventListener('change', event => {
+          const [file] = event.target.files || [];
+
+          if (!file || !file.type.startsWith('image/')) return;
+
+          const reader = new FileReader();
+          const image = new Image();
+
+          reader.onload = loadEvent => {
+            image.onload = () => {
+              const canvas = document.createElement('canvas');
+              canvas.width = 128;
+              canvas.height = 128;
+              const ctx = canvas.getContext('2d');
+              ctx.clearRect(0, 0, 128, 128);
+
+              const scale = Math.min(128 / image.width, 128 / image.height);
+              const width = image.width * scale;
+              const height = image.height * scale;
+              const offsetX = (128 - width) / 2;
+              const offsetY = (128 - height) / 2;
+
+              ctx.drawImage(image, offsetX, offsetY, width, height);
+
+              canvas.toBlob(blob => {
+                if (!blob) return;
+
+                const resizedFile = new File([blob], file.name.replace(/\.\w+$/, '.png'), {
+                  type: 'image/png',
+                  lastModified: Date.now()
+                });
+
+                const dataTransfer = new DataTransfer();
+                dataTransfer.items.add(resizedFile);
+                avatarInput.files = dataTransfer.files;
+              }, 'image/png');
+            };
+
+            image.src = loadEvent.target.result;
+          };
+
+          reader.readAsDataURL(file);
+        });
+      });
+    </script>
+  </body>
+</html>
