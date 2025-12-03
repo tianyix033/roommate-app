@@ -66,20 +66,6 @@ jobs:
             echo "ERROR: No merged coverage!"
             exit 1
           fi
-      
-      - name: Generate final coverage report
-        run: |
-          ruby -e "
-          require 'simplecov'
-          SimpleCov.coverage_dir 'coverage'
-          result = SimpleCov::ResultMerger.merged_result
-          result.format!
-          puts \"Total Coverage: #{result.covered_percent.round(2)}%\"
-          puts \"Covered Lines: #{result.covered_lines} / #{result.total_lines}\"
-          "
-        env:
-          RAILS_ENV: test
-      
       - name: Upload coverage report
         uses: actions/upload-artifact@v4
         if: always()
