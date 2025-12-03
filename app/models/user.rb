@@ -11,8 +11,9 @@ class User < ApplicationRecord
   before_validation :set_default_role
   validates :role, inclusion: { in: ROLES }
 
-  validates :email, presence: true, uniqueness: true
+  validates :email, presence: true, uniqueness: true, format: { with: URI::MailTo::EMAIL_REGEXP }
   validates :password, presence: true, on: :create
+  validate :password_strength, if: -> { password.present? }
   validates :display_name, presence: true, if: :profile_display_name_required?
   validates :budget,
             numericality: { greater_than_or_equal_to: 0 },
@@ -50,5 +51,13 @@ class User < ApplicationRecord
 
   def set_default_role
     self.role ||= 'member'
+  end
+
+  def password_strength
+    return if password.blank?
+
+    unless password.length >= 10 && password.match?(/[a-zA-Z]/) && password.match?(/\d/)
+      errors.add(:password, 'must be at least 10 characters and include both letters and numbers')
+    end
   end
 end
