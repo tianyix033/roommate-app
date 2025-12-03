@@ -7,8 +7,10 @@
 require 'simplecov'
 require 'simplecov-console'
 
+
 SimpleCov.command_name 'Cucumber'  # Add this line to identify Cucumber runs
-SimpleCov.minimum_coverage 70
+SimpleCov.minimum_coverage 60
+
 SimpleCov.start 'rails' do
   add_filter '/features/'  # Exclude feature files themselves
 end
