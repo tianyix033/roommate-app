@@ -3,7 +3,7 @@
 [![CI](https://github.com/NYU-CSE-Software-Engineering/cs-uy-4513-f25-team5/actions/workflows/ci.yml/badge.svg)](https://github.com/NYU-CSE-Software-Engineering/cs-uy-4513-f25-team5/actions/workflows/ci.yml) [![Deploy to Heroku](https://github.com/NYU-CSE-Software-Engineering/cs-uy-4513-f25-team5/actions/workflows/deploy.yml/badge.svg)](https://github.com/NYU-CSE-Software-Engineering/cs-uy-4513-f25-team5/actions/workflows/deploy.yml)
 
 
-RoomMate [Room-Mate.app](https://Room-Mate.app/) is a SaaS platform that helps students and newcomers find compatible roommates and share housing costs.
+RoomMate ([Room-Mate.app](https://Room-Mate.app/)) is a SaaS platform that helps students and newcomers find compatible roommates and share housing costs.
 
 - Build secure user profiles with lifestyle, budget, and housing preferences
 - Match seekers and listers with a compatibility engine and verified listings
