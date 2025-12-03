@@ -16,17 +16,17 @@
           <%= link_to conversation_path(conversation), class: 'conversation-link' do %>
             <div class="conversation-header">
               <div class="user-info">
-                <% if other_user.avatars.any? %>
-                  <div class="avatar">
-                    <%= image_tag "data:image/png;base64,#{other_user.avatars.last.image_base64}", 
-                                  alt: "#{other_user.display_name}'s avatar", 
-                                  class: 'avatar-img' %>
-                  </div>
-                <% else %>
-                  <div class="avatar-placeholder">
-                    <%= other_user.display_name.first.upcase %>
-                  </div>
-                <% end %>
+                <% if other_user.avatar %>
+        <div class="avatar">
+          <%= image_tag "data:image/png;base64,#{other_user.avatar.image_base64}", 
+                        alt: "#{other_user.display_name}'s avatar", 
+                        class: 'avatar-img' %>
+        </div>
+      <% else %>
+        <div class="avatar-placeholder">
+          <%= other_user.display_name.first.upcase %>
+        </div>
+      <% end %>
                 
                 <div class="user-details">
                   <h3><%= other_user.display_name %></h3>

@@ -8,10 +8,12 @@
     <% end %>
     
     <div class="conversation-title">
-      <% if other_user.avatars.any? %>
-        <%= image_tag "data:image/png;base64,#{other_user.avatars.last.image_base64}", 
-                      alt: "#{other_user.display_name}'s avatar", 
-                      class: 'avatar-img' %>
+      <% if other_user.avatar %>
+        <div class="avatar">
+          <%= image_tag "data:image/png;base64,#{other_user.avatar.image_base64}", 
+                        alt: "#{other_user.display_name}'s avatar", 
+                        class: 'avatar-img' %>
+        </div>
       <% else %>
         <div class="avatar-placeholder">
           <%= other_user.display_name.first.upcase %>

@@ -13,20 +13,11 @@ class MessagesController < ApplicationController
     @message.user = current_user
 
     if @message.save
-      respond_to do |format|
-        format.html { redirect_to conversation_path(@conversation), notice: "Message sent." }
-        format.turbo_stream
-        format.json { render json: @message, status: :created }
-      end
+      redirect_to conversation_path(@conversation), notice: "Message sent."
     else
-      respond_to do |format|
-        format.html do
-          @messages = @conversation.messages.includes(:user).order(created_at: :asc)
-          flash.now[:alert] = "Message could not be sent."
-          render 'conversations/show', status: :unprocessable_entity
-        end
-        format.json { render json: @message.errors, status: :unprocessable_entity }
-      end
+      @messages = @conversation.messages.includes(:user).order(created_at: :asc)
+      flash.now[:alert] = "Message could not be sent."
+      render 'conversations/show', status: :unprocessable_entity
     end
   end
 
