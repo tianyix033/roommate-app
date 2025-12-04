@@ -38,7 +38,7 @@ class MessagesController < ApplicationController
 
   def require_login
     unless current_user
-      redirect_to login_path, alert: "You must be logged in."
+      redirect_to auth_login_path, alert: "You must be logged in."
     end
   end
 end

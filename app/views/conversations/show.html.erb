@@ -14,7 +14,7 @@
                       class: 'avatar-img' %>
       <% else %>
         <div class="avatar-placeholder">
-          <%= other_user.display_name.first.upcase %>
+          <%= other_user.display_name&.first&.upcase || 'U' %>
         </div>
       <% end %>
       <h2><%= other_user.display_name %></h2>

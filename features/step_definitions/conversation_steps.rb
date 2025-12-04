@@ -93,12 +93,6 @@ When('I visit the conversations page') do
   visit conversations_path
 end
 
-When('I visit the conversation with {string}') do |display_name|
-  user = User.find_by(display_name: display_name)
-  other_user = @conversation.participant_one == @current_user ? @conversation.participant_two : @conversation.participant_one
-  visit conversation_path(@conversation)
-end
-
 When('I click {string}') do |button_text|
   click_button button_text
 end
