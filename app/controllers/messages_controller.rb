@@ -17,7 +17,7 @@ class MessagesController < ApplicationController
     else
       @messages = @conversation.messages.includes(:user).order(created_at: :asc)
       flash.now[:alert] = "Message could not be sent."
-      render 'conversations/show', status: :unprocessable_entity
+      render 'conversations/show', status: :unprocessable_content
     end
   end
 
