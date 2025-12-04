@@ -1,6 +1,14 @@
 <div class="conversation-container">
   <% other_user = @conversation.participant_one_id == current_user.id ? @conversation.participant_two : @conversation.participant_one %>
   
+  <% flash.each do |type, msg| %>
+  <div class="flash-message <%= type %>">
+    <%= msg %>
+  </div>
+<% end %>
+
+
+
   <!-- Conversation Header -->
   <div class="conversation-header">
     <%= link_to conversations_path, class: 'back-link' do %>
@@ -57,7 +65,6 @@
         <%= f.text_area :body, 
                         placeholder: "Type your message...", 
                         rows: 3,
-                        required: true,
                         class: 'message-input' %>
       </div>
 

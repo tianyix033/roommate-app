@@ -101,7 +101,7 @@ class ConversationsController < ApplicationController
 
   def require_login
     unless current_user
-      redirect_to login_path, alert: "You must be logged in to access conversations."
+      redirect_to auth_login_path, alert: "You must be logged in to access conversations."
     end
   end
 end

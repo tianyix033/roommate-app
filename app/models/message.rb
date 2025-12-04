@@ -2,7 +2,17 @@ class Message < ApplicationRecord
   belongs_to :conversation
   belongs_to :user
 
-  validates :body, presence: true, length: { minimum: 1, maximum: 5000 }
+  validate :body_not_blank
+
+  def body_not_blank
+    if body.strip.empty?
+      errors.add(:body, "cannot be blank")
+    end
+  end
+
+
+
+
   validates :conversation_id, presence: true
   validates :user_id, presence: true
 

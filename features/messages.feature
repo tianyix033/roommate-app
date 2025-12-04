@@ -46,3 +46,23 @@ Feature: Messaging between users
     And I press "Send Message"
     When I visit the conversation with email "bob@example.com"
     Then I should see "My test message"
+
+  Scenario: User cannot access someone else's conversation
+    Given I am logged in as "alice@example.com"
+    And a conversation exists between "bob@example.com" and "carol@example.com"
+    When I POST to create a message in that conversation
+    Then I should be redirected to the conversations page
+    And I should see "You don't have access"
+
+  Scenario: Message fails to save due to validation error
+    Given I am logged in as "alice@example.com"
+    And a conversation exists between "alice@example.com" and "bob@example.com"
+    When I visit the conversation with email "bob@example.com"
+    And I fill in "message[body]" with ""
+    And I press "Send Message"
+    Then I should see "Message could not be sent."
+
+  Scenario: User must be logged in to send a message
+    When I POST to create a message without being logged in
+    Then I should be redirected to the login page
+    And I should see "You must be logged in."
