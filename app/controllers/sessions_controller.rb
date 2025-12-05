@@ -1,5 +1,4 @@
 class SessionsController < ApplicationController
-  layout false, only: [:new]
 
   def new
   end

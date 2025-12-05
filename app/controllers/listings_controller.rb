@@ -1,5 +1,4 @@
 class ListingsController < ApplicationController
-  layout false, only: [:index, :new, :search, :show, :edit]
   before_action :set_listing, only: [:show, :edit, :update, :destroy]
 
   def index
