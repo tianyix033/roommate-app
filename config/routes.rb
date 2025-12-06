@@ -18,8 +18,10 @@ Rails.application.routes.draw do
 
   resource :profile, only: [:show, :edit, :update]
 
-  get '/search/listings', to: 'listings#search'
   resources :listings, only: [:index, :show, :new, :create, :edit, :update, :destroy] do
+    collection do
+      get :search
+    end
     member do
       patch :verify, to: 'verification_requests#verify'
     end
@@ -31,5 +33,13 @@ Rails.application.routes.draw do
   
   namespace :admin do
     resources :reports, only: [:index]
+  
+  resources :matches, only: [:index, :show] do
+    collection do
+      post :generate, to: 'matches#generate'
+    end
+    member do
+      post :like, to: 'matches#like'
+    end
   end
 end
