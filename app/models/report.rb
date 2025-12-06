@@ -12,6 +12,7 @@ class Report < ApplicationRecord
 
   before_validation :set_reported_user
   validate :reported_user_exists
+  validate :cannot_report_self
 
   private
 
@@ -25,6 +26,12 @@ class Report < ApplicationRecord
   def reported_user_exists
     if reported_username.present? && reported_user.nil?
       errors.add(:reported_username, "User does not exist")
+    end
+  end
+
+  def cannot_report_self
+    if reporter.present? && reported_user.present? && reporter.id == reported_user.id
+      errors.add(:reported_username, "Cannot report yourself")
     end
   end
 end

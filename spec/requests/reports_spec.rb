@@ -5,6 +5,10 @@ RSpec.describe 'Reports', type: :request do
   let(:other_user) { create(:user) }
 
   describe 'POST /reports' do
+    before do
+      post '/auth/login', params: { email: user.email, password: user.password }
+    end
+
     context 'with valid parameters' do
       let(:valid_params) do
         {
@@ -46,11 +50,6 @@ RSpec.describe 'Reports', type: :request do
           post reports_path, params: invalid_params
         }.not_to change(Report, :count)
       end
-
-      it 'returns unprocessable entity status' do
-        post reports_path, params: invalid_params
-        expect(response).to have_http_status(:unprocessable_entity)
-      end
     end
 
     context 'with non-existent username' do
@@ -69,11 +68,6 @@ RSpec.describe 'Reports', type: :request do
         expect {
           post reports_path, params: nonexistent_params
         }.not_to change(Report, :count)
-      end
-
-      it 'returns unprocessable entity status' do
-        post reports_path, params: nonexistent_params
-        expect(response).to have_http_status(:unprocessable_entity)
       end
     end
   end

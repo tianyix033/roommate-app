@@ -8,11 +8,11 @@ Given("an admin exists") do
 end
 
 Given("at least one report exists in the system") do
-  reporter = User.find_or_create_by!(email: "reporter@example.com") do |user|
+  reporter ||= User.find_or_create_by!(email: "reporter@example.com") do |user|
     user.password = "password1234"
   end
   
-  reported_user = User.find_or_create_by!(email: "reporteduser@example.com") do |user|
+  reported_user ||= User.find_or_create_by!(email: "reporteduser@example.com") do |user|
     user.password = "password1234"
   end
   
@@ -35,20 +35,21 @@ end
 # New Reports Page Steps
 
 Given("I am on the \"New Reports\" page") do
+  page.driver.post '/auth/login', { email: @reporter_user.email, password: 'password1234' }
   visit new_report_path
 end
 
 When("I enter {string} in the username field") do |username|
-  fill_in "report_username", with: username
+  fill_in "report[reported_username]", with: username
   @reported_user = User.find_by(email: username)
 end
 
 When("I select {string} from the report type list") do |type|
-  select type, from: "report_report_type"
+  select type, from: "report[report_type]"
 end
 
 When("I enter {string} in the description field") do |description|
-  fill_in "report_description", with: description
+  fill_in "report[description]", with: description
 end
 
 When("I press the submit button") do
@@ -61,9 +62,9 @@ end
 
 # Then Steps
 
-# Then("I should see a confirmation") do
-#   expect(page).to have_content("Your report has been submitted. Thank you.")
-# end
+Then("I should see a confirmation") do
+  expect(page).to have_content("Your report has been submitted. Thank you.")
+end
 
 Then("the report should be saved in the system") do
   expect(Report.last.report_type).not_to be_nil
@@ -80,6 +81,7 @@ end
 # Admin Reports Page Steps
 
 Given('I visit the admin reports page as an admin') do
+  page.driver.post '/auth/login', { email: @admin.email, password: 'password1234' }
   visit admin_reports_path
 end
 
