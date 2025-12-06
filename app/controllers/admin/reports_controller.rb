@@ -1,5 +1,5 @@
 class Admin::ReportsController < ApplicationController
-  before_action :require_admin
+  before_action :require_admin, :require_login, only: [:index]
 
   def index
     @reports = Report.all
