@@ -1,12 +1,10 @@
 # features/step_definitions/chat_steps.rb
-# Step definitions for the chat feature aligned with Project Specification
-# Messaging is only allowed between matched users (per spec section 2.4)
 
-# Store users and matches by name for easy lookup
 Before do
   @users = {}
   @matches = {}
   @blocked_users = []
+  @user_passwords ||= {}  # Add this to Before block
 end
 
 Given('the matching system is available') do
@@ -15,10 +13,26 @@ Given('the matching system is available') do
 end
 
 Given('I am a signed-in user named {string}') do |name|
-  @me = User.create!(name: name, password: "password1234" ,email: "#{name.downcase.gsub(' ', '')}@example.com")
+  email = "#{name.downcase.gsub(' ', '')}@example.com"
+  password = "password1234"
+  
+  @me = User.create!(
+    name: name,
+    password: password,
+    email: email
+  )
   @users[name] = @me
+  
+  @user_passwords[email] = password
+  
+  visit auth_login_path
+  fill_in 'Email', with: email
+  fill_in 'Password', with: password
+  click_button 'Sign in'
+  
   @current_user = @me
 end
+
 
 Given('another user {string} exists') do |name|
   user = User.create!(name: name, password: "password1234", email: "#{name.downcase.gsub(' ', '')}@example.com")
