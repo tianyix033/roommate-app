@@ -15,13 +15,13 @@ Given('the matching system is available') do
 end
 
 Given('I am a signed-in user named {string}') do |name|
-  @me = User.create!(name: name, email: "#{name.downcase.gsub(' ', '')}@example.com")
+  @me = User.create!(name: name, password: "password1234" ,email: "#{name.downcase.gsub(' ', '')}@example.com")
   @users[name] = @me
   @current_user = @me
 end
 
 Given('another user {string} exists') do |name|
-  user = User.create!(name: name, email: "#{name.downcase.gsub(' ', '')}@example.com")
+  user = User.create!(name: name, password: "password1234", email: "#{name.downcase.gsub(' ', '')}@example.com")
   @users[name] = user
 end
 
