@@ -6,7 +6,7 @@ class ReportsController < ApplicationController
   end
 
   def create
-    @report = Report.new(report_params)
+    @report = Report.new(report_params.merge(reporter: current_user))
     
     if @report.save
       redirect_to root_path, notice: "Your report has been submitted. Thank you."
@@ -18,6 +18,6 @@ class ReportsController < ApplicationController
   private
 
   def report_params
-    params.require(:report).permit(:reporter_id, :reported_username, :report_type, :description)
+    params.require(:report).permit(:reported_username, :report_type, :description)
   end
 end
