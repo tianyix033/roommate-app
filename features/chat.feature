@@ -68,4 +68,4 @@ Feature: Chat with matched users
     And "Steven" has a conversation with "Charlie"
     When I try to visit the conversation between "Steven" and "Charlie"
     Then I should be denied access
-    And I should see "You are not authorized"
+    And I should see "You do not have access to this conversation."

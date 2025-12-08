@@ -165,7 +165,7 @@ Then('each message should have a timestamp') do
 end
 
 Then('I should see a validation error') do
-  has_error = page.has_content?("can't be blank") || 
+  has_error = page.has_content?("Message could not be sent.") || 
               page.has_content?("error") || 
               page.has_css?(".error")
   expect(has_error).to be true
@@ -180,7 +180,8 @@ Then('I should be denied access') do
   has_error = page.has_content?("not authorized") || 
               page.has_content?("access denied") || 
               page.has_content?("You are not authorized") ||
-              page.has_content?("You must be matched")
+              page.has_content?("You must be matched") || 
+              page.has_content?("You do not have access to this conversation.")
   expect(has_error).to be true
 end
 

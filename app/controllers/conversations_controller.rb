@@ -61,6 +61,11 @@ class ConversationsController < ApplicationController
       return
     end
 
+    unless users_are_matched?(current_user, other_user)
+      redirect_to request.referrer || dashboard_path, alert: "You must be matched to send messages"
+      return
+    end
+
     @conversation = find_or_create_conversation(current_user.id, other_user.id)
 
     if @conversation.persisted?
@@ -71,6 +76,13 @@ class ConversationsController < ApplicationController
   end
 
   private
+
+  def users_are_matched?(user1, user2)
+    ActiveMatch.where(status: 'active')
+              .where('(user_one_id = ? AND user_two_id = ?) OR (user_one_id = ? AND user_two_id = ?)',
+                      user1.id, user2.id, user2.id, user1.id)
+              .exists?
+  end
 
   def set_conversation
     @conversation = Conversation.find(params[:id])

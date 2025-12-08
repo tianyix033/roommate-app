@@ -1,6 +1,9 @@
 class Message < ApplicationRecord
   belongs_to :conversation
   belongs_to :user
+  
+  validates :body, presence: true
+  validates :body, length: { minimum: 1 }
 
   validate :body_not_blank
 
