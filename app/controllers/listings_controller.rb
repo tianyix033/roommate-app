@@ -1,6 +1,7 @@
 class ListingsController < ApplicationController
   before_action :require_login, except: [:index, :show, :search]
   before_action :set_listing, only: [:show, :edit, :update, :destroy]
+  before_action :authorize_user, only: [:edit, :update, :destroy]
 
   def index
     @listings = Listing.all
@@ -66,5 +67,11 @@ class ListingsController < ApplicationController
 
   def listing_params
     params.require(:listing).permit(:title, :description, :price, :city, :owner_email)
+  end
+
+  def authorize_user
+    unless @listing.user == current_user
+      redirect_to listings_path, alert: 'You are not authorized to perform this action.'
+    end
   end
 end
