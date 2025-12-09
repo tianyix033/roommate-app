@@ -5,6 +5,7 @@ class Conversation < ApplicationRecord
 
   validates :participant_one_id, uniqueness: { scope: :participant_two_id }
   validate :participants_are_different
+  validate :no_duplicate_conversation
 
   def other_participant(user)
     participant_one_id == user.id ? participant_two : participant_one
@@ -23,6 +24,19 @@ class Conversation < ApplicationRecord
   def participants_are_different
     if participant_one_id == participant_two_id
       errors.add(:base, "Cannot create a conversation with yourself")
+    end
+  end
+
+  def no_duplicate_conversation
+    return if participant_one_id.nil? || participant_two_id.nil?
+    
+    existing = Conversation.where(
+      "(participant_one_id = ? AND participant_two_id = ?) OR (participant_one_id = ? AND participant_two_id = ?)",
+      participant_one_id, participant_two_id, participant_two_id, participant_one_id
+    ).where.not(id: id).exists?
+    
+    if existing
+      errors.add(:base, "Conversation already exists between these users")
     end
   end
 end
