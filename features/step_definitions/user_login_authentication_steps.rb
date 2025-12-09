@@ -45,7 +45,7 @@ Given('I am logged in as {string}') do |email|
   visit auth_login_path
   fill_in 'Email', with: email
   fill_in 'Password', with: password
-  click_button 'Log In'
+  click_button 'Sign in'
 
   @current_user = User.find_by(email: email)
 end
