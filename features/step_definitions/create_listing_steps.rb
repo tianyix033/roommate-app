@@ -40,7 +40,3 @@ Given('there is a listing titled {string}') do |title|
     user: @user || User.create!(email: 'test2@example.com', password: 'password')
   )
 end
-
-Then('I should see a validation error {string}') do |err|
-  expect(page).to have_content(err)
-end
