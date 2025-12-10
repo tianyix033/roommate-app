@@ -1,12 +1,5 @@
 <nav class="bg-midnight text-lavender px-4 py-3 shadow-md">
   <ul class="flex list-none items-center gap-8">
-    <li>
-      <%= link_to 'Home', dashboard_path, class: "hover:text-mint font-semibold transition-colors" %>
-    </li>
-    <li>
-      <%= link_to 'Browse Listings', listings_path, class: "hover:text-mint font-semibold transition-colors" %>
-    </li>
-
     <% if logged_in? %>
       <li>
         <%= link_to 'My Listings', user_listings_path(current_user), class: "hover:text-mint font-semibold transition-colors" %>
