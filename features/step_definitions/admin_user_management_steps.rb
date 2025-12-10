@@ -1,6 +1,23 @@
 Given('I create the following users:') do |table|
+  # store plaintext test passwords by email so sign-in steps can use them
+  $test_passwords ||= {}
+
   table.hashes.each do |user_attrs|
-    User.create!(user_attrs)
+    raw = user_attrs['password'] || 'password'
+    # ensure password has at least 10 chars and contains letters and numbers
+    password = raw.dup
+    unless password =~ /(?=.{10,})(?=.*[A-Za-z])(?=.*\d)/
+      # append digits to make length >= 10 and include numbers
+      password = (raw + '1234567890')
+      password = password[0, 10] if password.length > 10
+      password += '1' unless password =~ /\d/
+    end
+
+    user_attrs['password'] = password
+    user_attrs['password_confirmation'] = password
+
+    user = User.create!(user_attrs)
+    $test_passwords[user.email] = password
   end
 end
 

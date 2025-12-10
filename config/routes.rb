@@ -26,6 +26,8 @@ Rails.application.routes.draw do
     end
     member do
       patch :verify, to: 'verification_requests#verify'
+      delete 'images/:image_id', to: 'listings#remove_image', as: :remove_image
+      patch 'images/:image_id/set_primary', to: 'listings#set_primary_image', as: :set_primary_image
     end
   end
 

@@ -1,10 +1,11 @@
 When(/I (?:create|attempt to create) a listing with:/) do |table|  
   visit new_listing_path
   data = table.rows_hash
-  fill_in 'Title', with: data['title']
-  fill_in 'Description', with: data['description']
-  fill_in 'Price', with: data['price']
-  fill_in 'City', with: data['city']
+  
+  fill_in 'Title', with: data['title'] || ''
+  fill_in 'Description', with: data['description'] || ''
+  fill_in 'Price', with: data['price'] || ''
+  fill_in 'City', with: data['city'] || ''
   click_button 'Create Listing'
 end
 
@@ -26,6 +27,10 @@ Then('I should see a validation error for {string}') do |field|
   expect(page).to have_content("#{field.capitalize} can't be blank")
 end
 
+Then('I should see a validation error {string}') do |message|
+  expect(page).to have_content(message)
+end
+
 Given('there is a listing titled {string}') do |title|
   @listing ||= Listing.create!(
     title: title,
@@ -34,8 +39,4 @@ Given('there is a listing titled {string}') do |title|
     city: 'Test City',
     user: @user || User.create!(email: 'test2@example.com', password: 'password')
   )
-end
-
-Then('I should see a validation error {string}') do |err|
-  expect(page).to have_content(err)
 end
