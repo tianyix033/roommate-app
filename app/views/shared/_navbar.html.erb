@@ -8,6 +8,9 @@
     </li>
 
     <% if logged_in? %>
+      <li>
+        <%= link_to 'My Listings', user_listings_path(current_user), class: "hover:text-mint font-semibold transition-colors" %>
+      </li>
       <% if current_user.admin? %>
         <li>
           <%= link_to 'Verify Listings', verification_requests_path, class: "hover:text-mint font-semibold transition-colors" %>

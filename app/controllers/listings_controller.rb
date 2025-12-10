@@ -5,10 +5,17 @@ class ListingsController < ApplicationController
   def index
     @filters = params.slice(:city, :min_price, :max_price, :keywords).permit!.to_h.symbolize_keys
     
-    if @filters.values.any?(&:present?)
+    # Check if this is a "My Listings" page (from user_listings_path)
+    if params[:id].present?
+      @user = User.find(params[:id])
+      @listings = @user.listings
+      @is_my_listings = true
+    elsif @filters.values.any?(&:present?)
       @listings = Listing.search(@filters)
+      @is_my_listings = false
     else
       @listings = Listing.all
+      @is_my_listings = false
     end
   end
 
