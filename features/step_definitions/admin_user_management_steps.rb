@@ -21,7 +21,6 @@ Given('I create the following users:') do |table|
   end
 end
 
-
 Given('I am signed in as an admin') do
   @current_user = User.find_by(role: 'admin')
   visit new_user_session_path

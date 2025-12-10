@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_11_29_214054) do
+ActiveRecord::Schema[7.1].define(version: 2025_12_08_163458) do
   create_table "active_matches", force: :cascade do |t|
     t.integer "user_one_id", null: false
     t.integer "user_two_id", null: false
