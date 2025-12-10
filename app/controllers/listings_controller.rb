@@ -1,7 +1,7 @@
 class ListingsController < ApplicationController
   before_action :require_login, except: [:index, :show, :search]
-  before_action :set_listing, only: [:show, :edit, :update, :destroy]
-  before_action :authorize_user, only: [:edit, :update, :destroy]
+  before_action :set_listing, only: [:show, :edit, :update, :destroy, :remove_image, :set_primary_image]
+  before_action :authorize_user, only: [:edit, :update, :destroy, :remove_image, :set_primary_image]
 
   def index
     if params[:id].present?
@@ -67,7 +67,7 @@ class ListingsController < ApplicationController
   end
 
   def remove_image
-    image = @listing.images.attachments.find_by(id: params[:image_id])
+    image = @listing.images.find { |img| img.id.to_s == params[:image_id].to_s }
     
     if image
       was_primary = @listing.primary_image_id == image.id.to_s
@@ -87,7 +87,7 @@ class ListingsController < ApplicationController
   end
 
   def set_primary_image
-    image = @listing.images.attachments.find_by(id: params[:image_id])
+    image = @listing.images.find { |img| img.id.to_s == params[:image_id].to_s }
     
     if image
       @listing.set_primary_image!(image.id)
