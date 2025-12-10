@@ -114,7 +114,10 @@ class ListingsController < ApplicationController
   end
 
   def listing_params
-    params.require(:listing).permit(:title, :description, :price, :city, :owner_email, images: [])
+    permitted = params.require(:listing).permit(:title, :description, :price, :city, :owner_email, images: [])
+    # Convert empty price string to nil to trigger proper validation
+    permitted[:price] = nil if permitted[:price].to_s.strip.empty?
+    permitted
   end
 
   def authorize_user
