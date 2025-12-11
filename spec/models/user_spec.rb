@@ -41,16 +41,16 @@ RSpec.describe User, type: :model do
       expect(user.display_name).to eq('Custom Name')
     end
 
-    it 'handles blank or malformed emails without raising' do
+    it 'handles blank or malformed emails without raising and falls back to User' do
       user = described_class.new(email: '', password: 'password123')
 
       expect { user.valid? }.not_to raise_error
-      expect(user.display_name).to satisfy { |value| value.nil? || value == '' }
+      expect(user.display_name).to eq('User')
 
       malformed = described_class.new(email: 'invalid-email', password: 'password123')
 
       expect { malformed.valid? }.not_to raise_error
-      expect(malformed.display_name).to eq('invalid-email')
+      expect(malformed.display_name).to eq('User')
     end
   end
 
