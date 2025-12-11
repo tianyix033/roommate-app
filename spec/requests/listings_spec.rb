@@ -301,6 +301,25 @@ RSpec.describe "Listings", type: :request do
       end
     end
 
+    context "when adding additional images" do
+      it "appends new images without removing existing ones" do
+        existing_image = attach_image_to(listing, filename: 'existing.png')
+        new_image = fixture_file_upload(
+          Rails.root.join('features', 'screenshots', 'user_profile_management_1.png'),
+          'image/png'
+        )
+
+        patch listing_path(listing), params: { listing: { images: [new_image] } }
+
+        listing.reload
+        filenames = listing.images.map { |img| img.filename.to_s }
+
+        expect(filenames).to include(existing_image.filename.to_s)
+        expect(filenames).to include(new_image.original_filename)
+        expect(listing.images.count).to eq(2)
+      end
+    end
+
     context "with invalid parameters (blank title)" do
       let(:invalid_params) do
         {

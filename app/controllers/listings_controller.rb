@@ -45,7 +45,10 @@ class ListingsController < ApplicationController
   end
 
   def update
-    if @listing.update(listing_params)
+    new_images = listing_params[:images]
+    @listing.images.attach(new_images) if new_images.present?
+
+    if @listing.update(listing_params.except(:images))
       redirect_to @listing, notice: 'Listing was successfully updated.'
     else
       render :edit, status: :unprocessable_content
