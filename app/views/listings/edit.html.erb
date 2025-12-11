@@ -367,29 +367,33 @@ document.addEventListener('DOMContentLoaded', function() {
       fetch(`/cities/autocomplete?q=${encodeURIComponent(query)}`)
         .then(response => response.json())
         .then(cities => {
-          if (cities.length === 0) {
+          const safeCities = (cities || []).filter(city => city && !city.includes('%s'));
+
+          if (safeCities.length === 0) {
             autocompleteDiv.classList.add('hidden');
             return;
           }
-          
-          autocompleteDiv.innerHTML = cities.map((city, index) => `
-            <div class="city-option px-4 py-2 cursor-pointer hover:bg-white/10 text-white ${index === 0 ? 'bg-white/5' : ''}" 
-                 data-city="${city.replace(/"/g, '&quot;')}" 
-                 data-index="${index}">
-              ${city}
-            </div>
-          `).join('');
-          
-          autocompleteDiv.classList.remove('hidden');
-          selectedIndex = -1;
-          
-          // Add click handlers
-          autocompleteDiv.querySelectorAll('.city-option').forEach(option => {
+
+          autocompleteDiv.innerHTML = '';
+          const fragment = document.createDocumentFragment();
+
+          safeCities.forEach((city, index) => {
+            const option = document.createElement('div');
+            option.className = `city-option px-4 py-2 cursor-pointer hover:bg-white/10 text-white ${index === 0 ? 'bg-white/5' : ''}`;
+            option.dataset.city = city;
+            option.dataset.index = index;
+            option.textContent = city; // use textContent to avoid injecting HTML from API
             option.addEventListener('click', function() {
               cityInput.value = this.dataset.city;
               autocompleteDiv.classList.add('hidden');
             });
+            fragment.appendChild(option);
           });
+
+          autocompleteDiv.appendChild(fragment);
+          autocompleteDiv.classList.remove('hidden');
+          selectedIndex = 0;
+          updateSelection(autocompleteDiv.querySelectorAll('.city-option'));
         })
         .catch(() => {
           autocompleteDiv.classList.add('hidden');
@@ -408,9 +412,10 @@ document.addEventListener('DOMContentLoaded', function() {
       e.preventDefault();
       selectedIndex = Math.max(selectedIndex - 1, -1);
       updateSelection(options);
-    } else if (e.key === 'Enter' && selectedIndex >= 0) {
+    } else if (e.key === 'Enter' && options.length > 0) {
       e.preventDefault();
-      options[selectedIndex].click();
+      const target = options[selectedIndex >= 0 ? selectedIndex : 0];
+      target.click();
     } else if (e.key === 'Escape') {
       autocompleteDiv.classList.add('hidden');
     }
