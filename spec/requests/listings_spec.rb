@@ -34,6 +34,13 @@ RSpec.describe "Listings", type: :request do
     listing.images.last
   end
 
+  def build_upload(content:, content_type:, filename: 'upload.png')
+    file = Tempfile.new(['upload', File.extname(filename)])
+    file.write(content)
+    file.rewind
+    Rack::Test::UploadedFile.new(file.path, content_type)
+  end
+
 
   # ========================================
   # CREATE LISTING FEATURE
@@ -298,6 +305,86 @@ RSpec.describe "Listings", type: :request do
         listing.reload
         expect(listing.title).to eq(original_title)
         expect(listing.city).to eq(original_city)
+      end
+    end
+
+    context "when adding additional images" do
+      it "appends new images without removing existing ones" do
+        existing_image = attach_image_to(listing, filename: 'existing.png')
+        new_image = fixture_file_upload(
+          Rails.root.join('features', 'screenshots', 'user_profile_management_1.png'),
+          'image/png'
+        )
+
+        patch listing_path(listing), params: { listing: { images: [new_image] } }
+
+        listing.reload
+        filenames = listing.images.map { |img| img.filename.to_s }
+
+        expect(filenames).to include(existing_image.filename.to_s)
+        expect(filenames).to include(new_image.original_filename)
+        expect(listing.images.count).to eq(2)
+      end
+    end
+
+    context "when already at the image limit" do
+      before do
+        Listing::MAX_IMAGES.times do |idx|
+          attach_image_to(listing, filename: "img-#{idx}.png")
+        end
+      end
+
+      it "rejects new images and does not persist attachments" do
+        extra_image = build_upload(content: 'extra', content_type: 'image/png', filename: 'extra.png')
+
+        expect {
+          patch listing_path(listing), params: { listing: { images: [extra_image] } }
+        }.not_to change { listing.reload.images.count }
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(response.body).to include("cannot exceed #{Listing::MAX_IMAGES} images")
+      end
+    end
+
+    context "when adding invalid image types" do
+      it "does not persist invalid attachments" do
+        bad_image = build_upload(content: 'text-data', content_type: 'text/plain', filename: 'bad.txt')
+
+        expect {
+          patch listing_path(listing), params: { listing: { images: [bad_image] } }
+        }.not_to change { listing.reload.images.count }
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(response.body).to include("must be JPEG, PNG, WebP, or GIF")
+      end
+    end
+
+    context "when adding oversized images" do
+      it "rejects images exceeding size limit" do
+        large_content = 'a' * (Listing::MAX_IMAGE_SIZE + 1)
+        large_image = build_upload(content: large_content, content_type: 'image/png', filename: 'large.png')
+
+        expect {
+          patch listing_path(listing), params: { listing: { images: [large_image] } }
+        }.not_to change { listing.reload.images.count }
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(response.body).to include("must be less than #{Listing::MAX_IMAGE_SIZE / 1.megabyte}MB each")
+      end
+    end
+
+    context "when other validations fail with new images" do
+      it "rolls back image attachments on validation errors" do
+        existing_image = attach_image_to(listing, filename: 'existing.png')
+        new_image = build_upload(content: 'new', content_type: 'image/png', filename: 'new.png')
+
+        expect {
+          patch listing_path(listing), params: { listing: { title: '', images: [new_image] } }
+        }.not_to change { listing.reload.images.count }
+
+        expect(listing.images.first.filename.to_s).to eq(existing_image.filename.to_s)
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(response.body).to include("can&#39;t be blank")
       end
     end
 

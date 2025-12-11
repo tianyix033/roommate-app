@@ -45,11 +45,19 @@ class ListingsController < ApplicationController
   end
 
   def update
-    if @listing.update(listing_params)
-      redirect_to @listing, notice: 'Listing was successfully updated.'
-    else
-      render :edit, status: :unprocessable_content
+    permitted = listing_params
+    new_images = permitted.delete(:images)
+
+    success = @listing.with_transaction_returning_status do
+      @listing.assign_attributes(permitted)
+      @listing.images.attach(new_images) if new_images.present?
+      @listing.save
     end
+
+    return redirect_to(@listing, notice: 'Listing was successfully updated.') if success
+
+    @listing.reload
+    render :edit, status: :unprocessable_content
   end
 
   def destroy
