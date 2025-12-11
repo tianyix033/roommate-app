@@ -42,7 +42,7 @@
             <span class="message-sender">
               <%= message.user_id == current_user.id ? 'You' : message.user.display_name %>
             </span>
-            <span class="message-time">
+            <span class="message-time" data-timestamp="<%= message.created_at.iso8601 %>">
               <%= message.created_at.strftime("%b %d, %I:%M %p") %>
             </span>
           </div>
@@ -366,11 +366,20 @@
       const isSent = message.is_current_user;
       const messageClass = isSent ? 'message-sent' : 'message-received';
       
+      const date = new Date(message.created_at);
+      const localTime = date.toLocaleString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: '2-digit',
+        hour12: true
+      });
+      
       return `
         <div class="message ${messageClass}" data-message-id="${message.id}">
           <div class="message-header">
             <span class="message-sender">${isSent ? 'You' : message.user_name}</span>
-            <span class="message-time">${message.created_at}</span>
+            <span class="message-time">${localTime}</span>
           </div>
           <div class="message-body">
             ${message.body.replace(/\n/g, '<br>')}
@@ -422,6 +431,20 @@
       if (pollInterval) {
         clearInterval(pollInterval);
       }
+    });
+
+    // Convert existing timestamps to local time
+    document.querySelectorAll('[data-timestamp]').forEach(function(element) {
+      const isoTime = element.getAttribute('data-timestamp');
+      const date = new Date(isoTime);
+      const formatted = date.toLocaleString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: '2-digit',
+        hour12: true
+      });
+      element.textContent = formatted;
     });
   })();
 </script>
