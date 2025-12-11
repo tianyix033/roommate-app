@@ -1,12 +1,12 @@
 <h1 class="text-3xl font-bold mb-6">Match Details</h1>
 <div class="match-details space-y-6">
-  <h2 class="text-2xl font-semibold text-gray-800"><%= @matched_user.display_name %></h2>
+  <h2 class="text-2xl font-semibold text-white-900 italic"><%= @matched_user.display_name %></h2>
   
   <div class="compatibility-score bg-blue-100 border-l-4 border-blue-500 p-4 rounded">
     <p class="text-blue-800 font-medium"><strong>Compatibility:</strong> <%= @match.compatibility_score %>%</p>
   </div>
   
-  <div class="profile-information bg-gray-50 border rounded-lg p-4 shadow-sm">
+  <div class="profile-information bg-gray-50 border rounded-lg p-4 shadow-sm text-gray-900">
     <h3 class="text-xl font-semibold mb-2 text-gray-700">Profile Information</h3>
     <p class="mb-1"><strong>Email:</strong> <%= @matched_user.email %></p>
     <% if @matched_user.display_name.present? %>
@@ -17,7 +17,7 @@
     <% end %>
   </div>
   
-  <div class="lifestyle-preferences bg-gray-50 border rounded-lg p-4 shadow-sm">
+  <div class="lifestyle-preferences bg-gray-50 border rounded-lg p-4 shadow-sm text-gray-900">
     <h3 class="text-xl font-semibold mb-2 text-gray-700">Lifestyle Preferences</h3>
     <% if @matched_user.preferred_location.present? %>
       <p class="mb-1"><strong>Preferred Location:</strong> <%= @matched_user.preferred_location %></p>
